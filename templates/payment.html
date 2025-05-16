@@ -229,6 +229,9 @@
             "order_id": "{{ order_id }}",
             "handler": function (response) {
                 // Create a form and submit it to your success endpoint
+                alert(response.razorpay_payment_id);
+                alert(response.razorpay_order_id);
+                alert(response.razorpay_signature);
                 var form = document.createElement('form');
                 form.method = 'POST';
                 form.action = "{{ url_for('payment_success') }}";

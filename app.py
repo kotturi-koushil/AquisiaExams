@@ -414,11 +414,11 @@ def quiz(day):
         if conn:
             conn.close()
 
-
-# adding sample Quiz
 @app.route("/payment/success", methods=["POST"])
 @login_required
 def payment_success():
+    conn = None
+    curr = None
     try:
         # Verify payment signature
         razorpay_client.utility.verify_payment_signature({
@@ -426,30 +426,42 @@ def payment_success():
             "razorpay_payment_id": request.form["razorpay_payment_id"],
             "razorpay_signature": request.form["razorpay_signature"]
         })
-        
+
+        print("Payment signature verified successfully.")
+
         # Update subscription status in database
         conn = get_db_connection()
-        curr = conn.cursor()
-        
-        # Set subscription to TRUE (1 in MySQL) for this user
-        curr.execute(
-            "UPDATE users SET subscription = TRUE WHERE id = %s",
-            (session.get("user_id"),)
-        )
-        conn.commit()
-        
-        flash("Payment successful! Your subscription has been activated.", "success")
-        return redirect(url_for("days"))
-        
+        print(f"Database connection established: {conn is not None}")
+        if conn:
+            curr = conn.cursor()
+            print(f"Cursor created: {curr is not None}")
+
+            user_id = session.get("user_id")
+            print(f"User ID from session: {user_id}")
+
+            # Set subscription to TRUE (1 in MySQL) for this user
+            sql = "UPDATE users SET subscription = TRUE WHERE id = %s"
+            print(f"Executing SQL: {sql}, with params: {(user_id,)}")
+            curr.execute(sql, (user_id,))
+            conn.commit()
+            print("Database commit successful.")
+
+            flash("Payment successful! Your subscription has been activated.", "success")
+            return redirect(url_for("days"))
+        else:
+            flash("Failed to connect to the database.", "error")
+            return redirect(url_for("subscription")) # Or another appropriate route
+
     except razorpay.errors.SignatureVerificationError:
         flash("Payment verification failed. Please contact support.", "error")
     except Exception as e:
         flash(f"Error processing payment: {str(e)}", "error")
+        print(f"Error in payment_success: {e}") # Log the full exception
     finally:
-        if 'curr' in locals(): curr.close()
-        if 'conn' in locals(): conn.close()
-    
-    return redirect(url_for("subscription"))
+        if curr: curr.close()
+        if conn: conn.close()
+
+    return redirect(url_for("subscription")) # This line might be redundant
 
 
 @app.route("/user-results")
@@ -975,12 +987,6 @@ def logout():
     session.clear()
     flash("Logged out successfully", "success")
     return redirect(url_for("login"))
-
-
-from flask import Flask, request, render_template, jsonify
-import base64
-from io import BytesIO
-import matplotlib.pyplot as plt
 
 
 @app.route("/score-board")

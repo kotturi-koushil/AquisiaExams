@@ -413,55 +413,79 @@ def quiz(day):
             curr.close()
         if conn:
             conn.close()
+from razorpay import Client
+from razorpay.errors import SignatureVerificationError  # Correct import path
+
+# Initialize Razorpay client properly
+razorpay_client = Client(auth=(os.getenv("RAZORPAY_KEY_ID"), os.getenv("RAZORPAY_KEY_SECRET")))
 
 @app.route("/payment/success", methods=["POST"])
 @login_required
 def payment_success():
-    conn = None
-    curr = None
     try:
+        # Get payment details from form
+        razorpay_payment_id = request.form.get('razorpay_payment_id')
+        razorpay_order_id = request.form.get('razorpay_order_id')
+        razorpay_signature = request.form.get('razorpay_signature')
+        
         # Verify payment signature
-        razorpay_client.utility.verify_payment_signature({
-            "razorpay_order_id": request.form["razorpay_order_id"],
-            "razorpay_payment_id": request.form["razorpay_payment_id"],
-            "razorpay_signature": request.form["razorpay_signature"]
-        })
-
-        print("Payment signature verified successfully.")
-
+        params_dict = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature
+        }
+        
+        razorpay_client.utility.verify_payment_signature(params_dict)
+        
+        # Get user ID from session
+        user_id = session.get('user_id')
+        if not user_id:
+            flash("Session expired. Please login again.", "error")
+            return redirect(url_for('login'))
+        
         # Update subscription status in database
-        conn = get_db_connection()
-        print(f"Database connection established: {conn is not None}")
-        if conn:
+        conn = None
+        curr = None
+        try:
+            conn = get_db_connection()
             curr = conn.cursor()
-            print(f"Cursor created: {curr is not None}")
-
-            user_id = session.get("user_id")
-            print(f"User ID from session: {user_id}")
-
-            # Set subscription to TRUE (1 in MySQL) for this user
-            sql = "UPDATE users SET subscription = TRUE WHERE id = %s"
-            print(f"Executing SQL: {sql}, with params: {(user_id,)}")
-            curr.execute(sql, (user_id,))
+            
+            # Check if user exists
+            curr.execute("SELECT id FROM users WHERE id = %s", (user_id,))
+            if not curr.fetchone():
+                flash("User not found", "error")
+                return redirect(url_for('index'))
+            
+            # Update subscription status
+            curr.execute(
+                "UPDATE users SET subscription = TRUE WHERE id = %s",
+                (user_id,)
+            )
             conn.commit()
-            print("Database commit successful.")
-
+            
             flash("Payment successful! Your subscription has been activated.", "success")
-            return redirect(url_for("days"))
-        else:
-            flash("Failed to connect to the database.", "error")
-            return redirect(url_for("subscription")) # Or another appropriate route
-
-    except razorpay.errors.SignatureVerificationError:
+            return redirect(url_for('days'))
+            
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            app.logger.error(f"Database error in payment_success: {str(e)}")
+            flash("Error updating your subscription. Please contact support.", "error")
+            return redirect(url_for('subscription'))
+        finally:
+            if curr:
+                curr.close()
+            if conn:
+                conn.close()
+                
+    except SignatureVerificationError:
+        app.logger.error("Payment signature verification failed")
         flash("Payment verification failed. Please contact support.", "error")
+        return redirect(url_for('subscription'))
     except Exception as e:
-        flash(f"Error processing payment: {str(e)}", "error")
-        print(f"Error in payment_success: {e}") # Log the full exception
-    finally:
-        if curr: curr.close()
-        if conn: conn.close()
-
-    return redirect(url_for("subscription")) # This line might be redundant
+        app.logger.error(f"Error in payment_success: {str(e)}")
+        flash("An error occurred while processing your payment.", "error")
+        return redirect(url_for('subscription'))
 
 
 @app.route("/user-results")

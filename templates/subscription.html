@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription | Aquisia-Exams</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --success: #4cc9f0;
+            --success-dark: #4895ef;
+            --warning: #f72585;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --nav-bg: #0a1a3a;
+            --footer-bg: #2c3e50;
+            --page-bg: #f8f9fa;
+            --border-radius: 12px;
+            --locked: #bdc3c7;
+            --locked-dark: #7f8c8d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 80px;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: var(--success);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--success);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .navbar-toggler {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Subscription Styles */
+        .subscription-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .subscription-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .subscription-title {
+            color: #3a0ca3;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .subscription-price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4361ee;
+            margin: 1rem 0;
+        }
+
+        .subscription-features {
+            text-align: left;
+            margin: 2rem 0;
+        }
+
+        .subscription-features li {
+            margin: 1rem 0;
+            list-style: none;
+        }
+
+        .alert {
+            padding: 14px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .alert-success {
+            background-color: rgba(76, 201, 240, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .subscription-features i {
+            color: #4cc9f0;
+            margin-right: 10px;
+        }
+
+        .subscribe-btn {
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .subscribe-btn:hover {
+            background: #3a0ca3;
+            transform: translateY(-2px);
+        }
+
+        .premium-badge {
+            background: gold;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--footer-bg);
+            color: white;
+            padding: 3rem 0 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .social-links {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-link {
+            color: white;
+            font-size: 1.3rem;
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        .social-link:hover {
+            color: var(--success);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .navbar {
+                height: 70px;
+                padding: 0.5rem 1rem;
+            }
+
+            .navbar-nav {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                right: 0;
+                background-color: var(--nav-bg);
+                flex-direction: column;
+                width: 100%;
+                margin-top: 0;
+                padding: 1rem 0;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .navbar-nav.active {
+                left: 0;
+                display: flex;
+            }
+
+            .nav-item {
+                margin: 0.75rem 0;
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-link::after {
+                display: none;
+            }
+
+            .navbar-toggler {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='877d97b9-824a-4e8d-831f-69978a4253fd.webp') }}" alt="Logo">
+                <span>Aquisia-Exams</span>
+            </a>
+
+            <button class="navbar-toggler" id="navbarToggler">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav" id="navbarNav">
+                <li class="nav-item">
+                    <a href="{{url_for('index')}}" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{url_for('days')}}" class="nav-link">Daily Exams</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{url_for('user_results')}}" class="nav-link">Scoreboard</a>
+                </li>
+                {% if 'user_id' in session %}
+                <li class="nav-item">
+                    <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('register') }}" class="nav-link">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="subscription-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="subscription-card">
+                <div class="premium-badge">
+                    <i class="fas fa-crown"></i> PREMIUM
+                </div>
+                <h1 class="subscription-title">Unlock Full Access</h1>
+                <div class="subscription-price">₹300 /- Until DSC Exam</div>
+
+                <ul class="subscription-features">
+                    <li><i class="fas fa-check"></i> Access to all premium content</li>
+                    <li><i class="fas fa-check"></i> Detailed performance analytics</li>
+                    <li><i class="fas fa-check"></i> Priority support</li>
+                    <li><i class="fas fa-check"></i> Unlimited exam attempts</li>
+                    <li><i class="fas fa-check"></i> Detailed solutions</li>
+                </ul>
+
+                {% if has_subscription %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> You already have an active subscription!
+                </div>
+                <a href="{{ url_for('days') }}" class="subscribe-btn" style="background-color: var(--success);">
+                    Go to Daily Exams
+                </a>
+                {% else %}
+                <form method="POST" action="{{ url_for('subscription') }}">
+                    <button type="submit" class="subscribe-btn">
+                        Subscribe Now
+                    </button>
+                </form>
+                {% endif %}
+
+                <p style="margin-top: 20px; font-size: 0.8rem; color: #666;">
+                    <i class="fas fa-lock"></i> Secure payment powered by Razorpay
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">About Us</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <div class="copyright">
+                &copy; 2025 Aquisia-Exams. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar toggle functionality
+        document.getElementById('navbarToggler').addEventListener('click', function () {
+            const nav = document.getElementById('navbarNav');
+            nav.classList.toggle('active');
+
+            // Change icon based on menu state
+            const icon = this.querySelector('i');
+            if (nav.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const nav = document.getElementById('navbarNav');
+                nav.classList.remove('active');
+                const toggler = document.getElementById('navbarToggler');
+                const icon = toggler.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+    </script>
+</body>
+
+</html>

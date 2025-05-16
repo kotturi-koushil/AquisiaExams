@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment | Aquisia-Exams</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --success: #4cc9f0;
+            --success-dark: #4895ef;
+            --warning: #f72585;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --nav-bg: #0a1a3a;
+            --footer-bg: #2c3e50;
+            --page-bg: #f8f9fa;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 80px;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+
+        /* Payment Styles */
+        .payment-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .payment-title {
+            color: #3a0ca3;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4361ee;
+            margin: 1rem 0;
+        }
+
+        .payment-details {
+            text-align: left;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .payment-details p {
+            margin: 0.5rem 0;
+        }
+
+        .payment-btn {
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .payment-btn:hover {
+            background: #3a0ca3;
+            transform: translateY(-2px);
+        }
+
+        .payment-security {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--footer-bg);
+            color: white;
+            padding: 3rem 0 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .navbar {
+                height: 70px;
+                padding: 0.5rem 1rem;
+            }
+
+            .payment-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='877d97b9-824a-4e8d-831f-69978a4253fd.webp') }}" alt="Logo">
+                <span>Aquisia-Exams</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="payment-container">
+            <h1 class="payment-title">Complete Your Payment</h1>
+            <div class="payment-amount">₹300</div>
+
+            <div class="payment-details">
+                <p><strong>Plan:</strong> Premium Subscription</p>
+                <p><strong>Duration:</strong> Until DSC Exam</p>
+                <p><strong>Email:</strong> {{ email }}</p>
+            </div>
+
+            <button id="rzp-button1" class="payment-btn">
+                <i class="fas fa-lock"></i> Pay Securely
+            </button>
+
+            <div class="payment-security">
+                <i class="fas fa-shield-alt"></i> Secure payment powered by Razorpay
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Aquisia-Exams. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "{{ razorpay_key }}",
+            "amount": "{{ amount }}",
+            "currency": "INR",
+            "name": "Aquisia-Exams",
+            "description": "Premium Subscription",
+            "image": "{{ url_for('static', filename='877d97b9-824a-4e8d-831f-69978a4253fd.webp') }}",
+            "order_id": "{{ order_id }}",
+            "handler": function (response) {
+                // Create a form and submit it to your success endpoint
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('payment_success') }}";
+
+                var inputs = {
+                    'razorpay_payment_id': response.razorpay_payment_id,
+                    'razorpay_order_id': response.razorpay_order_id,
+                    'razorpay_signature': response.razorpay_signature
+                };
+
+                for (var key in inputs) {
+                    if (inputs.hasOwnProperty(key)) {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = inputs[key];
+                        form.appendChild(input);
+                    }
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            },
+            "prefill": {
+                "name": "{{ name }}",
+                "email": "{{ email }}"
+            },
+            "theme": {
+                "color": "#4361ee"
+            },
+            "modal": {
+                "ondismiss": function () {
+                    window.location.href = "{{ url_for('subscription') }}";
+                }
+            }
+        };
+
+        var rzp1 = new Razorpay(options);
+
+        document.getElementById('rzp-button1').onclick = function (e) {
+            rzp1.open();
+            e.preventDefault();
+        };
+
+        // Open Razorpay automatically when page loads
+        window.onload = function () {
+            rzp1.open();
+        };
+    </script>
+</body>
+
+</html>

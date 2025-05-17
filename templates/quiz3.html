@@ -7,24 +7,31 @@
     <title>Day {{ day }} Quiz</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
         :root {
             --primary: #4361ee;
             --primary-dark: #3a0ca3;
             --success: #4cc9f0;
-            --error: #f72585;
-            --warning: #f8961e;
-            --bg: #ffffff;
-            --card-bg: white;
+            --success-dark: #4895ef;
+            --warning: #f72585;
             --text: #2c3e50;
             --text-light: #7f8c8d;
-            --transition: all 0.3s ease;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --nav-bg: #0a1a3a;
             --footer-bg: #2c3e50;
             --page-bg: #f8f9fa;
+            --border-radius: 12px;
+            --locked: #bdc3c7;
+            --locked-dark: #7f8c8d;
         }
 
         * {
@@ -133,21 +140,67 @@
         }
 
         /* Mobile menu styles */
-        .navbar-nav.active {
-            display: flex;
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .navbar {
+                height: 70px;
+                padding: 0.5rem 1rem;
+            }
+
+            .navbar-nav {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                right: 0;
+                background-color: var(--nav-bg);
+                flex-direction: column;
+                width: 100%;
+                margin-top: 0;
+                padding: 1rem 0;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .navbar-nav.active {
+                left: 0;
+                display: flex;
+            }
+
+            .nav-item {
+                margin: 0.75rem 0;
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-link::after {
+                display: none;
+            }
+
+            .navbar-toggler {
+                display: block;
+            }
         }
 
-        /* Quiz Container - Updated Responsive Styles */
+        /* Quiz Container */
         .quiz-container {
             width: 90%;
             max-width: 800px;
             min-width: 300px;
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: var(--border-radius);
             padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             margin: 20px auto;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .quiz-header {
@@ -214,6 +267,13 @@
             line-height: 1.5;
             color: var(--text);
             transition: all 0.3s ease;
+            white-space: pre-line;
+        }
+
+        /* Telugu font style */
+        .telugu-text {
+            font-family: 'Noto Sans Telugu', sans-serif;
+            font-size: 1.1rem;
         }
 
         .options-container {
@@ -230,6 +290,7 @@
             cursor: pointer;
             transition: var(--transition);
             border: 2px solid #ddd;
+            white-space: pre-line;
         }
 
         .option:hover {
@@ -241,16 +302,27 @@
             background: rgba(67, 97, 238, 0.1);
         }
 
-        .option.correct {
-            background: rgba(76, 201, 240, 0.2);
-            border-color: var(--success);
-            color: var(--success);
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
         }
 
-        .option.incorrect {
-            background: rgba(247, 37, 133, 0.2);
-            border-color: var(--error);
-            color: var(--error);
+        .nav-btn {
+            padding: 12px 25px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
         }
 
         .next-btn {
@@ -258,17 +330,22 @@
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            display: none;
         }
 
         .next-btn:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
+        }
+
+        .next-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .result-container {
@@ -293,9 +370,9 @@
             margin-bottom: 30px;
             border-collapse: collapse;
             background: white;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
         }
 
         .subject-scores th,
@@ -334,11 +411,11 @@
         .result-btn {
             padding: 12px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -422,145 +499,21 @@
             margin-top: 1rem;
         }
 
-        /* Responsive Adjustments */
-        @media (max-width: 992px) {
-            .quiz-container {
-                width: 92%;
-                padding: 1.8rem;
-            }
-        }
-
+        /* Responsive styles */
         @media (max-width: 768px) {
-            body {
-                padding-top: 70px;
-            }
-
-            .navbar {
-                height: 70px;
-                padding: 0.5rem 1rem;
-            }
-
-            .navbar-nav {
-                position: fixed;
-                top: 70px;
-                left: -100%;
-                right: 0;
-                background-color: var(--nav-bg);
-                flex-direction: column;
-                width: 100%;
-                margin-top: 0;
-                padding: 1rem 0;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
-            }
-
-            .navbar-nav.active {
-                left: 0;
-                display: flex;
-            }
-
-            .nav-item {
-                margin: 0.75rem 0;
-                margin-left: 0;
-                width: 100%;
-                text-align: center;
-            }
-
-            .nav-link {
-                display: block;
-                padding: 0.75rem 1rem;
-            }
-
-            .nav-link::after {
-                display: none;
-            }
-
-            .navbar-toggler {
-                display: block;
-            }
-
             .quiz-container {
                 width: 94%;
                 padding: 1.5rem;
-                border-radius: 12px;
             }
 
-            .quiz-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .quiz-progress {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .question-text {
-                font-size: 1.1rem;
-                line-height: 1.4;
-            }
-
-            .option {
-                padding: 12px 15px;
-                font-size: 0.95rem;
-            }
-
-            .result-actions {
+            .navigation-buttons {
                 flex-direction: column;
                 gap: 10px;
             }
 
-            .result-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .quiz-container {
-                width: 96%;
-                padding: 1.2rem;
-                border-radius: 10px;
-            }
-
-            .quiz-header {
-                gap: 12px;
-            }
-
-            .quiz-progress {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .timer-container {
-                width: 100%;
-            }
-
-            .question-text {
-                font-size: 1rem;
-            }
-
-            .option {
-                padding: 10px 12px;
-            }
-
+            .nav-btn,
             .next-btn {
                 width: 100%;
-            }
-
-            /* Fix for subject-wise performance table */
-            .subject-scores {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-
-            .subject-scores th,
-            .subject-scores td {
-                padding: 8px 10px;
-                font-size: 0.85rem;
             }
         }
     </style>
@@ -584,7 +537,7 @@
                     <a href="{{url_for('index')}}" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{url_for('days')}}" class="nav-link">Daily Topics</a>
+                    <a href="{{url_for('days')}}" class="nav-link">Daily Exams</a>
                 </li>
                 <li class="nav-item">
                     <a href="{{url_for('user_results')}}" class="nav-link">Scoreboard</a>
@@ -618,7 +571,7 @@
                 <div class="progress-text">Question <span id="current-question">1</span>/<span id="total-questions">{{
                         questions|length }}</span></div>
                 <div class="timer-container" id="timer-container">
-                    <div class="timer" id="timer">1:00</div>
+                    <div class="timer" id="timer">{{ questions|length }}:00</div>
                     <div class="timer-progress">
                         <div class="timer-progress-bar" id="timer-progress-bar"></div>
                     </div>
@@ -629,7 +582,10 @@
         <div id="question-container" class="question-container">
             <div id="question-text" class="question-text"></div>
             <div id="options-container" class="options-container"></div>
-            <button id="next-btn" class="next-btn">Next Question</button>
+            <div class="navigation-buttons">
+                <button id="prev-btn" class="nav-btn">Previous</button>
+                <button id="next-btn" class="next-btn">Next Question</button>
+            </div>
         </div>
 
         <div id="result-container" class="result-container">
@@ -653,22 +609,10 @@
 
             <div class="result-actions">
                 <button class="result-btn pdf-btn" id="download-pdf">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        viewBox="0 0 16 16">
-                        <path
-                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                        <path
-                            d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
-                    </svg>
-                    Download PDF Report
+                    <i class="fas fa-file-pdf"></i> Download PDF Report
                 </button>
                 <button class="result-btn analysis-btn" id="performance-analysis">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        viewBox="0 0 16 16">
-                        <path
-                            d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z" />
-                    </svg>
-                    Performance Analysis
+                    <i class="fas fa-chart-bar"></i> Performance Analysis
                 </button>
             </div>
         </div>
@@ -705,15 +649,67 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let selectedOption = null;
-        let answerSubmitted = false;
         let timerInterval;
-        let timeLeft = 60; // 1 minute per question
+        let timeLeft = questions.length * 60; // Total minutes based on number of questions
 
         // Track user answers for PDF report
         let userAnswers = {};
 
         // Subject tracking
         let subjectScores = {};
+
+        // DOM elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const questionContainer = document.getElementById('question-container');
+        const resultContainer = document.getElementById('result-container');
+        const resultScore = document.getElementById('result-score');
+        const resultMessage = document.getElementById('result-message');
+        const timerDisplay = document.getElementById('timer');
+        const timerProgressBar = document.getElementById('timer-progress-bar');
+        const subjectScoresBody = document.getElementById('subject-scores-body');
+        const downloadPdfBtn = document.getElementById('download-pdf');
+        const performanceAnalysisBtn = document.getElementById('performance-analysis');
+        const timerContainer = document.getElementById('timer-container');
+        const navbarToggler = document.getElementById('navbarToggler');
+        const navbarNav = document.getElementById('navbarNav');
+
+        // Initialize the quiz
+        function initQuiz() {
+            // Mobile menu toggle
+            navbarToggler.addEventListener('click', () => {
+                navbarNav.classList.toggle('active');
+                // Change icon
+                const icon = navbarToggler.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            });
+
+            // Close menu when clicking on a link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navbarNav.classList.remove('active');
+                    const icon = navbarToggler.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                });
+            });
+
+            initializeSubjectScores();
+            totalQuestionsSpan.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+
+            // Set up event listeners
+            nextBtn.addEventListener('click', goToNextQuestion);
+            prevBtn.addEventListener('click', goToPreviousQuestion);
+            downloadPdfBtn.addEventListener('click', generatePdfReport);
+            performanceAnalysisBtn.addEventListener('click', redirectToAnalysis);
+        }
 
         // Initialize subject scores
         function initializeSubjectScores() {
@@ -738,119 +734,34 @@
                     ],
                     correctOption: question.correct_option,
                     selectedOption: null,
-                    subject: question.subject
+                    subject: question.subject,
+                    isTelugu: /[\u0C00-\u0C7F]/.test(question.question) // Check if question contains Telugu characters
                 };
             });
         }
 
-        // DOM elements
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const nextBtn = document.getElementById('next-btn');
-        const currentQuestionSpan = document.getElementById('current-question');
-        const totalQuestionsSpan = document.getElementById('total-questions');
-        const questionContainer = document.getElementById('question-container');
-        const resultContainer = document.getElementById('result-container');
-        const resultScore = document.getElementById('result-score');
-        const resultMessage = document.getElementById('result-message');
-        const timerDisplay = document.getElementById('timer');
-        const timerProgressBar = document.getElementById('timer-progress-bar');
-        const subjectScoresBody = document.getElementById('subject-scores-body');
-        const downloadPdfBtn = document.getElementById('download-pdf');
-        const performanceAnalysisBtn = document.getElementById('performance-analysis');
-        const quizTitleElement = document.getElementById('quiz-title');
-        const timerContainer = document.getElementById('timer-container');
-
-        // Initialize the quiz
-        function initQuiz() {
-            initializeSubjectScores();
-            totalQuestionsSpan.textContent = questions.length;
-
-            // Set quiz title based on day
-            if (day == 0) {
-                quizTitleElement.textContent = "Sample Test";
-            } else {
-                quizTitleElement.textContent = `Day ${day} Quiz`;
-            }
-
-            loadQuestion();
-
-            // Set up event listeners for new buttons
-            downloadPdfBtn.addEventListener('click', generatePdfReport);
-            performanceAnalysisBtn.addEventListener('click', redirectToAnalysis);
-        }
-
-        // Timer functions
-        function startTimer() {
-            clearInterval(timerInterval);
-            timeLeft = 60;
-            updateTimerDisplay();
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    if (!answerSubmitted) {
-                        autoSubmitQuestion();
-                    }
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-            // Update progress bar
-            const progressPercent = (timeLeft / 60) * 100;
-            timerProgressBar.style.width = `${progressPercent}%`;
-
-            // Change color when time is running out
-            if (timeLeft <= 10) {
-                timerDisplay.style.color = 'var(--error)';
-                timerProgressBar.style.background = 'var(--error)';
-            } else {
-                timerDisplay.style.color = 'var(--warning)';
-                timerProgressBar.style.background = 'var(--warning)';
-            }
-        }
-
-        function autoSubmitQuestion() {
-            if (selectedOption === null) {
-                // No option selected, mark as incorrect
-                const currentQuestion = questions[currentQuestionIndex];
-                const correctOption = currentQuestion.correct_option;
-                const optionElements = document.querySelectorAll('.option');
-
-                // Highlight correct answer
-                optionElements.forEach(option => {
-                    const optionValue = parseInt(option.dataset.option);
-                    if (optionValue === correctOption) {
-                        option.classList.add('correct');
-                    }
-                });
-            }
-
-            checkAnswer();
-        }
-
         // Load question
         function loadQuestion() {
-            answerSubmitted = false;
-            selectedOption = null;
             const currentQuestion = questions[currentQuestionIndex];
 
-            // Update question text
-            questionText.textContent = currentQuestion.question;
+            // Update question text with proper line breaks
+            questionText.innerHTML = currentQuestion.question.replace(/\n/g, '<br>');
+
+            // Add Telugu font class if needed
+            if (userAnswers[currentQuestionIndex].isTelugu) {
+                questionText.classList.add('telugu-text');
+            } else {
+                questionText.classList.remove('telugu-text');
+            }
 
             // Update question number
             currentQuestionSpan.textContent = currentQuestionIndex + 1;
 
             // Clear previous options
             optionsContainer.innerHTML = '';
+
+            // Get previously selected option if exists
+            selectedOption = userAnswers[currentQuestionIndex].selectedOption;
 
             // Create option elements
             const options = [
@@ -863,66 +774,120 @@
             options.forEach((option, index) => {
                 const optionElement = document.createElement('div');
                 optionElement.classList.add('option');
-                optionElement.textContent = option;
-                optionElement.dataset.option = index + 1; // 1-4
+
+                // Add Telugu font class if needed
+                if (/[\u0C00-\u0C7F]/.test(option)) {
+                    optionElement.classList.add('telugu-text');
+                }
+
+                optionElement.innerHTML = option.replace(/\n/g, '<br>');
+                optionElement.dataset.option = index + 1;
+
+                // Mark as selected if this was previously chosen
+                if (selectedOption === index + 1) {
+                    optionElement.classList.add('selected');
+                }
 
                 optionElement.addEventListener('click', () => {
-                    if (!answerSubmitted) {
-                        // Remove selected class from all options
+                    if (resultContainer.style.display !== 'block') {
                         document.querySelectorAll('.option').forEach(opt => {
                             opt.classList.remove('selected');
                         });
 
-                        // Add selected class to clicked option
                         optionElement.classList.add('selected');
                         selectedOption = index + 1;
-                        checkAnswer();
+                        userAnswers[currentQuestionIndex].selectedOption = selectedOption;
+
+                        // Enable next button
+                        nextBtn.disabled = false;
                     }
                 });
 
                 optionsContainer.appendChild(optionElement);
             });
 
-            // Hide next button initially
-            nextBtn.style.display = 'none';
-
-            // Start timer for this question
-            startTimer();
+            // Update navigation buttons
+            prevBtn.style.display = currentQuestionIndex === 0 ? 'none' : 'block';
+            nextBtn.textContent = currentQuestionIndex === questions.length - 1 ? 'Submit Quiz' : 'Next Question';
+            nextBtn.disabled = selectedOption === null;
         }
 
-        // Check answer
-        function checkAnswer() {
-            if (answerSubmitted) return;
-
-            clearInterval(timerInterval);
-            answerSubmitted = true;
-            const currentQuestion = questions[currentQuestionIndex];
-            const correctOption = currentQuestion.correct_option;
-            const currentSubject = currentQuestion.subject;
-            const optionElements = document.querySelectorAll('.option');
-
-            // Highlight correct and incorrect answers
-            optionElements.forEach(option => {
-                const optionValue = parseInt(option.dataset.option);
-
-                if (optionValue === correctOption) {
-                    option.classList.add('correct');
-                } else if (optionValue === selectedOption && selectedOption !== correctOption) {
-                    option.classList.add('incorrect');
-                }
-
-                // Disable further clicks
-                option.style.cursor = 'default';
-            });
-
-            // Record user's answer
-            userAnswers[currentQuestionIndex].selectedOption = selectedOption;
-
-            // Update scores if correct
-            if (selectedOption === correctOption) {
-                score++;
-                subjectScores[currentSubject].correct++;
+        // Navigation functions
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                // Submit the quiz
+                calculateResults();
+                showResults();
             }
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        // Timer functions
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = questions.length * 60;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            // Update progress bar
+            const progressPercent = (timeLeft / (questions.length * 60)) * 100;
+            timerProgressBar.style.width = `${progressPercent}%`;
+
+            // Change color when time is running out
+            if (timeLeft <= 60) {
+                timerDisplay.style.color = 'var(--warning)';
+                timerProgressBar.style.background = 'var(--warning)';
+            } else {
+                timerDisplay.style.color = 'var(--warning)';
+                timerProgressBar.style.background = 'var(--warning)';
+            }
+        }
+
+        function autoSubmitQuiz() {
+            // Submit all unanswered questions
+            questions.forEach((_, index) => {
+                if (userAnswers[index].selectedOption === null) {
+                    userAnswers[index].selectedOption = 0; // Mark as unanswered
+                }
+            });
+            calculateResults();
+            showResults();
+        }
+
+        // Calculate results
+        function calculateResults() {
+            score = 0; // Reset score
+
+            questions.forEach((question, index) => {
+                if (userAnswers[index].selectedOption === question.correct_option) {
+                    score++;
+                    subjectScores[question.subject].correct++;
+                }
+            });
 
             // Calculate percentages for all subjects
             for (const subject in subjectScores) {
@@ -930,21 +895,13 @@
                     (subjectScores[subject].correct / subjectScores[subject].total) * 100
                 );
             }
-
-            // Show next button or finish quiz
-            if (currentQuestionIndex < questions.length - 1) {
-                nextBtn.style.display = 'block';
-            } else {
-                setTimeout(showResults, 1500);
-            }
         }
 
         // Show results
         function showResults() {
+            clearInterval(timerInterval);
             questionContainer.style.display = 'none';
             resultContainer.style.display = 'block';
-
-            // Hide timer in results view
             timerContainer.style.display = 'none';
 
             // Display overall score
@@ -1001,23 +958,22 @@
                 })
             })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to save results');
-                    }
+                    if (!response.ok) throw new Error('Failed to save results');
                     return response.json();
                 })
-                .then(data => {
-                    console.log('Results saved:', data);
-                })
-                .catch(error => {
-                    console.error('Error saving results:', error);
-                });
+                .then(data => console.log('Results saved:', data))
+                .catch(error => console.error('Error saving results:', error));
         }
 
         // Generate PDF report
-        function generatePdfReport() {
+        async function generatePdfReport() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+
+            // Configure jsPDF
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm'
+            });
 
             // Add title
             doc.setFontSize(20);
@@ -1054,49 +1010,142 @@
             doc.setFontSize(12);
 
             yPos = 30;
-            Object.keys(userAnswers).forEach((key, index) => {
-                const q = userAnswers[key];
 
-                // Add question
+            // Process questions one by one to handle Telugu text
+            for (let i = 0; i < questions.length; i++) {
+                const q = userAnswers[i];
+
+                // Check if we need a new page
                 if (yPos > 250) {
                     doc.addPage();
                     yPos = 20;
                 }
 
+                // Question number
                 doc.setFontSize(12);
                 doc.setFont(undefined, 'bold');
-                doc.text(`${index + 1}. ${q.question}`, 14, yPos);
+                doc.text(`${i + 1}.`, 14, yPos);
+
+                // Handle question text (check if it's Telugu)
+                if (q.isTelugu) {
+                    // Create a temporary div to render the Telugu text
+                    const tempDiv = document.createElement('div');
+                    tempDiv.style.position = 'absolute';
+                    tempDiv.style.left = '-9999px';
+                    tempDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
+                    tempDiv.style.fontSize = '12px';
+                    tempDiv.style.width = '180mm';
+                    tempDiv.innerHTML = q.question;
+                    document.body.appendChild(tempDiv);
+
+                    // Convert to image
+                    try {
+                        const canvas = await html2canvas(tempDiv, {
+                            scale: 1,
+                            logging: false,
+                            useCORS: true
+                        });
+
+                        // Add image to PDF with reduced quality for smaller file size
+                        const imgData = canvas.toDataURL('image/jpeg', 0.7);
+                        const imgWidth = 180;
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                        doc.addImage(imgData, 'JPEG', 20, yPos, imgWidth, imgHeight);
+                        yPos += imgHeight + 5;
+                    } catch (error) {
+                        console.error('Error converting Telugu text to image:', error);
+                        // Fallback to text if image conversion fails
+                        doc.text(q.question, 20, yPos);
+                        yPos += 10;
+                    }
+
+                    document.body.removeChild(tempDiv);
+                } else {
+                    // Regular text question
+                    const questionLines = doc.splitTextToSize(q.question, 180);
+                    doc.text(questionLines, 20, yPos);
+                    yPos += questionLines.length * 7;
+                }
+
                 doc.setFont(undefined, 'normal');
+
+                // Process options
+                for (let j = 0; j < q.options.length; j++) {
+                    const opt = q.options[j];
+                    const isTeluguOption = /[\u0C00-\u0C7F]/.test(opt);
+                    const optionLetter = String.fromCharCode(97 + j);
+                    const isCorrect = (j + 1) === q.correctOption;
+                    const isSelected = (j + 1) === q.selectedOption;
+                    const isWrongSelection = isSelected && !isCorrect;
+
+                    // Option prefix (a), b), etc.)
+                    doc.text(`${optionLetter})`, 20, yPos);
+
+                    if (isTeluguOption) {
+                        // Handle Telugu option with image
+                        const tempOptionDiv = document.createElement('div');
+                        tempOptionDiv.style.position = 'absolute';
+                        tempOptionDiv.style.left = '-9999px';
+                        tempOptionDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
+                        tempOptionDiv.style.fontSize = '12px';
+                        tempOptionDiv.style.width = '160mm';
+                        tempOptionDiv.textContent = opt;
+                        document.body.appendChild(tempOptionDiv);
+
+                        try {
+                            const canvas = await html2canvas(tempOptionDiv, {
+                                scale: 1,
+                                logging: false,
+                                useCORS: true
+                            });
+
+                            const imgData = canvas.toDataURL('image/jpeg', 0.7);
+                            const imgWidth = 160;
+                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                            doc.addImage(imgData, 'JPEG', 26, yPos - 3, imgWidth, imgHeight);
+                            yPos += imgHeight + 5;
+                        } catch (error) {
+                            console.error('Error converting Telugu option to image:', error);
+                            doc.text(opt, 26, yPos);
+                            yPos += 7;
+                        }
+
+                        document.body.removeChild(tempOptionDiv);
+                    } else {
+                        // Regular text option
+                        const optionLines = doc.splitTextToSize(opt, 160);
+                        doc.text(optionLines, 26, yPos);
+                        yPos += optionLines.length * 7;
+                    }
+
+                    // Add status indicator
+                    let statusText = '';
+                    let statusColor = [0, 0, 0]; // Default black
+
+                    if (isCorrect && isSelected) {
+                        statusText = '✓ Your answer (Correct)';
+                        statusColor = [0, 128, 0]; // Green
+                    } else if (isCorrect) {
+                        statusText = '✓ Correct answer';
+                        statusColor = [0, 128, 0]; // Green
+                    } else if (isWrongSelection) {
+                        statusText = '✗ Your answer (Incorrect)';
+                        statusColor = [255, 0, 0]; // Red
+                    }
+
+                    if (statusText) {
+                        doc.setTextColor(...statusColor);
+                        doc.text(statusText, 26, yPos - 3);
+                        doc.setTextColor(0, 0, 0); // Reset to black
+                    }
+
+                    yPos += 5;
+                }
+
                 yPos += 10;
-
-                // Add options
-                q.options.forEach((opt, i) => {
-                    let optText = `${String.fromCharCode(97 + i)}) ${opt}`;
-
-                    // Highlight correct and selected answers
-                    if ((i + 1) === q.correctOption && (i + 1) === q.selectedOption) {
-                        doc.setTextColor(0, 128, 0); // Green for correct answer
-                        optText += " (Correct ✓)";
-                    }
-                    else if ((i + 1) === q.correctOption) {
-                        doc.setTextColor(0, 128, 0); // Green
-                        optText += " (Correct answer)";
-                    }
-                    else if ((i + 1) === q.selectedOption) {
-                        doc.setTextColor(255, 0, 0); // Red for wrong selection
-                        optText += " (Your choice ✗)";
-                    }
-                    else {
-                        doc.setTextColor(0, 0, 0); // Black
-                    }
-
-                    doc.text(optText, 20, yPos);
-                    yPos += 8;
-                });
-
-                yPos += 12;
-                doc.setTextColor(0, 0, 0); // Reset to black
-            });
+            }
 
             // Save the PDF
             doc.save(`Day_${day}_Quiz_Report_User_${userId}.pdf`);
@@ -1107,42 +1156,8 @@
             window.location.href = `/score-board?user_id=${userId}&day=${day}`;
         }
 
-        // Event listeners
-        nextBtn.addEventListener('click', () => {
-            currentQuestionIndex++;
-            loadQuestion();
-        });
-
-        // Mobile menu toggle
-        document.getElementById('navbarToggler').addEventListener('click', function () {
-            const nav = document.getElementById('navbarNav');
-            nav.classList.toggle('active');
-
-            // Change icon based on menu state
-            const icon = this.querySelector('i');
-            if (nav.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const nav = document.getElementById('navbarNav');
-                nav.classList.remove('active');
-                const toggler = document.getElementById('navbarToggler');
-                const icon = toggler.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-
-        // Start the quiz
-        initQuiz();
+        // Start the quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
     </script>
 </body>
 

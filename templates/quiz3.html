@@ -139,57 +139,6 @@
             z-index: 1001;
         }
 
-        /* Mobile menu styles */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 70px;
-            }
-
-            .navbar {
-                height: 70px;
-                padding: 0.5rem 1rem;
-            }
-
-            .navbar-nav {
-                position: fixed;
-                top: 70px;
-                left: -100%;
-                right: 0;
-                background-color: var(--nav-bg);
-                flex-direction: column;
-                width: 100%;
-                margin-top: 0;
-                padding: 1rem 0;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
-            }
-
-            .navbar-nav.active {
-                left: 0;
-                display: flex;
-            }
-
-            .nav-item {
-                margin: 0.75rem 0;
-                margin-left: 0;
-                width: 100%;
-                text-align: center;
-            }
-
-            .nav-link {
-                display: block;
-                padding: 0.75rem 1rem;
-            }
-
-            .nav-link::after {
-                display: none;
-            }
-
-            .navbar-toggler {
-                display: block;
-            }
-        }
-
         /* Quiz Container */
         .quiz-container {
             width: 90%;
@@ -501,6 +450,54 @@
 
         /* Responsive styles */
         @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .navbar {
+                height: 70px;
+                padding: 0.5rem 1rem;
+            }
+
+            .navbar-nav {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                right: 0;
+                background-color: var(--nav-bg);
+                flex-direction: column;
+                width: 100%;
+                margin-top: 0;
+                padding: 1rem 0;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .navbar-nav.active {
+                left: 0;
+                display: flex;
+            }
+
+            .nav-item {
+                margin: 0.75rem 0;
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-link::after {
+                display: none;
+            }
+
+            .navbar-toggler {
+                display: block;
+            }
+
             .quiz-container {
                 width: 94%;
                 padding: 1.5rem;
@@ -514,6 +511,91 @@
             .nav-btn,
             .next-btn {
                 width: 100%;
+            }
+
+            /* Mobile-specific fixes */
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .quiz-progress {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .timer-container {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            .timer-progress {
+                width: 80px;
+            }
+
+            .subject-scores {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .result-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .result-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* PDF download improvements */
+            .pdf-btn[disabled] {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+            .fa-spinner {
+                margin-right: 8px;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-header {
+                align-items: stretch;
+            }
+
+            .quiz-progress {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .timer-container {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .result-score {
+                font-size: 1.8rem;
+            }
+
+            .result-message {
+                font-size: 1rem;
             }
         }
     </style>
@@ -965,193 +1047,237 @@
                 .catch(error => console.error('Error saving results:', error));
         }
 
-        // Generate PDF report
+
+        //generating pdf
         async function generatePdfReport() {
-            const { jsPDF } = window.jspdf;
+            // Show loading indicator for mobile users
+            const originalText = downloadPdfBtn.innerHTML;
+            downloadPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+            downloadPdfBtn.disabled = true;
 
-            // Configure jsPDF
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm'
-            });
+            try {
+                const { jsPDF } = window.jspdf;
 
-            // Add title
-            doc.setFontSize(20);
-            doc.text(`Day ${day} Quiz Report`, 105, 20, { align: 'center' });
+                // Configure jsPDF
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm'
+                });
 
-            // Add user info
-            doc.setFontSize(12);
-            doc.text(`User ID: ${userId}`, 14, 30);
-            doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 40);
+                // Add title
+                doc.setFontSize(20);
+                doc.text(`Day ${day} Quiz Report`, 105, 20, { align: 'center' });
 
-            // Add summary
-            doc.setFontSize(16);
-            doc.text('Performance Summary', 14, 55);
-            doc.setFontSize(12);
-            doc.text(`Total Score: ${score}/${questions.length}`, 14, 65);
-            doc.text(`Percentage: ${Math.round((score / questions.length) * 100)}%`, 14, 75);
+                // Add user info
+                doc.setFontSize(12);
+                doc.text(`User ID: ${userId}`, 14, 30);
+                doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 40);
 
-            // Add subject-wise performance
-            doc.setFontSize(16);
-            doc.text('Subject-wise Performance', 14, 90);
-            doc.setFontSize(12);
+                // Add summary
+                doc.setFontSize(16);
+                doc.text('Performance Summary', 14, 55);
+                doc.setFontSize(12);
+                doc.text(`Total Score: ${score}/${questions.length}`, 14, 65);
+                doc.text(`Percentage: ${Math.round((score / questions.length) * 100)}%`, 14, 75);
 
-            let yPos = 100;
-            for (const subject in subjectScores) {
-                const subj = subjectScores[subject];
-                doc.text(`${subject}: ${subj.correct}/${subj.total} (${subj.percentage}%)`, 14, yPos);
-                yPos += 10;
-            }
+                // Add subject-wise performance
+                doc.setFontSize(16);
+                doc.text('Subject-wise Performance', 14, 90);
+                doc.setFontSize(12);
 
-            // Add detailed question answers
-            doc.addPage();
-            doc.setFontSize(16);
-            doc.text('Detailed Question Answers', 105, 20, { align: 'center' });
-            doc.setFontSize(12);
-
-            yPos = 30;
-
-            // Process questions one by one to handle Telugu text
-            for (let i = 0; i < questions.length; i++) {
-                const q = userAnswers[i];
-
-                // Check if we need a new page
-                if (yPos > 250) {
-                    doc.addPage();
-                    yPos = 20;
+                let yPos = 100;
+                for (const subject in subjectScores) {
+                    const subj = subjectScores[subject];
+                    doc.text(`${subject}: ${subj.correct}/${subj.total} (${subj.percentage}%)`, 14, yPos);
+                    yPos += 10;
                 }
 
-                // Question number
+                // Add detailed question answers
+                doc.addPage();
+                doc.setFontSize(16);
+                doc.text('Detailed Question Answers', 105, 20, { align: 'center' });
                 doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.text(`${i + 1}.`, 14, yPos);
 
-                // Handle question text (check if it's Telugu)
-                if (q.isTelugu) {
-                    // Create a temporary div to render the Telugu text
-                    const tempDiv = document.createElement('div');
-                    tempDiv.style.position = 'absolute';
-                    tempDiv.style.left = '-9999px';
-                    tempDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
-                    tempDiv.style.fontSize = '12px';
-                    tempDiv.style.width = '180mm';
-                    tempDiv.innerHTML = q.question;
-                    document.body.appendChild(tempDiv);
+                yPos = 30;
 
-                    // Convert to image
-                    try {
-                        const canvas = await html2canvas(tempDiv, {
-                            scale: 1,
-                            logging: false,
-                            useCORS: true
-                        });
+                // Process questions one by one to handle Telugu text
+                for (let i = 0; i < questions.length; i++) {
+                    const q = userAnswers[i];
 
-                        // Add image to PDF with reduced quality for smaller file size
-                        const imgData = canvas.toDataURL('image/jpeg', 0.7);
-                        const imgWidth = 180;
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                        doc.addImage(imgData, 'JPEG', 20, yPos, imgWidth, imgHeight);
-                        yPos += imgHeight + 5;
-                    } catch (error) {
-                        console.error('Error converting Telugu text to image:', error);
-                        // Fallback to text if image conversion fails
-                        doc.text(q.question, 20, yPos);
-                        yPos += 10;
+                    // Check if we need a new page
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
                     }
 
-                    document.body.removeChild(tempDiv);
-                } else {
-                    // Regular text question
-                    const questionLines = doc.splitTextToSize(q.question, 180);
-                    doc.text(questionLines, 20, yPos);
-                    yPos += questionLines.length * 7;
-                }
+                    // Question number
+                    doc.setFontSize(12);
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`${i + 1}.`, 14, yPos);
 
-                doc.setFont(undefined, 'normal');
+                    // Handle question text (check if it's Telugu)
+                    if (q.isTelugu) {
+                        // Create a temporary div to render the Telugu text
+                        const tempDiv = document.createElement('div');
+                        tempDiv.style.position = 'absolute';
+                        tempDiv.style.left = '-9999px';
+                        tempDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
+                        tempDiv.style.fontSize = '12px';
+                        tempDiv.style.width = '180mm';
+                        tempDiv.innerHTML = q.question;
+                        document.body.appendChild(tempDiv);
 
-                // Process options
-                for (let j = 0; j < q.options.length; j++) {
-                    const opt = q.options[j];
-                    const isTeluguOption = /[\u0C00-\u0C7F]/.test(opt);
-                    const optionLetter = String.fromCharCode(97 + j);
-                    const isCorrect = (j + 1) === q.correctOption;
-                    const isSelected = (j + 1) === q.selectedOption;
-                    const isWrongSelection = isSelected && !isCorrect;
-
-                    // Option prefix (a), b), etc.)
-                    doc.text(`${optionLetter})`, 20, yPos);
-
-                    if (isTeluguOption) {
-                        // Handle Telugu option with image
-                        const tempOptionDiv = document.createElement('div');
-                        tempOptionDiv.style.position = 'absolute';
-                        tempOptionDiv.style.left = '-9999px';
-                        tempOptionDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
-                        tempOptionDiv.style.fontSize = '12px';
-                        tempOptionDiv.style.width = '160mm';
-                        tempOptionDiv.textContent = opt;
-                        document.body.appendChild(tempOptionDiv);
-
+                        // Convert to image
                         try {
-                            const canvas = await html2canvas(tempOptionDiv, {
+                            const canvas = await html2canvas(tempDiv, {
                                 scale: 1,
                                 logging: false,
                                 useCORS: true
                             });
 
+                            // Add image to PDF with reduced quality for smaller file size
                             const imgData = canvas.toDataURL('image/jpeg', 0.7);
-                            const imgWidth = 160;
+                            const imgWidth = 180;
                             const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-                            doc.addImage(imgData, 'JPEG', 26, yPos - 3, imgWidth, imgHeight);
+                            doc.addImage(imgData, 'JPEG', 20, yPos, imgWidth, imgHeight);
                             yPos += imgHeight + 5;
                         } catch (error) {
-                            console.error('Error converting Telugu option to image:', error);
-                            doc.text(opt, 26, yPos);
-                            yPos += 7;
+                            console.error('Error converting Telugu text to image:', error);
+                            // Fallback to text if image conversion fails
+                            doc.text(q.question, 20, yPos);
+                            yPos += 10;
                         }
 
-                        document.body.removeChild(tempOptionDiv);
+                        document.body.removeChild(tempDiv);
                     } else {
-                        // Regular text option
-                        const optionLines = doc.splitTextToSize(opt, 160);
-                        doc.text(optionLines, 26, yPos);
-                        yPos += optionLines.length * 7;
+                        // Regular text question
+                        const questionLines = doc.splitTextToSize(q.question, 180);
+                        doc.text(questionLines, 20, yPos);
+                        yPos += questionLines.length * 7;
                     }
 
-                    // Add status indicator
-                    let statusText = '';
-                    let statusColor = [0, 0, 0]; // Default black
+                    doc.setFont(undefined, 'normal');
 
-                    if (isCorrect && isSelected) {
-                        statusText = '✓ Your answer (Correct)';
-                        statusColor = [0, 128, 0]; // Green
-                    } else if (isCorrect) {
-                        statusText = '✓ Correct answer';
-                        statusColor = [0, 128, 0]; // Green
-                    } else if (isWrongSelection) {
-                        statusText = '✗ Your answer (Incorrect)';
-                        statusColor = [255, 0, 0]; // Red
+                    // Process options
+                    for (let j = 0; j < q.options.length; j++) {
+                        const opt = q.options[j];
+                        const isTeluguOption = /[\u0C00-\u0C7F]/.test(opt);
+                        const optionLetter = String.fromCharCode(97 + j);
+                        const isCorrect = (j + 1) === q.correctOption;
+                        const isSelected = (j + 1) === q.selectedOption;
+                        const isWrongSelection = isSelected && !isCorrect;
+
+                        // Option prefix (a), b), etc.)
+                        doc.text(`${optionLetter})`, 20, yPos);
+
+                        if (isTeluguOption) {
+                            // Handle Telugu option with image
+                            const tempOptionDiv = document.createElement('div');
+                            tempOptionDiv.style.position = 'absolute';
+                            tempOptionDiv.style.left = '-9999px';
+                            tempOptionDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
+                            tempOptionDiv.style.fontSize = '12px';
+                            tempOptionDiv.style.width = '160mm';
+                            tempOptionDiv.textContent = opt;
+                            document.body.appendChild(tempOptionDiv);
+
+                            try {
+                                const canvas = await html2canvas(tempOptionDiv, {
+                                    scale: 1,
+                                    logging: false,
+                                    useCORS: true
+                                });
+
+                                const imgData = canvas.toDataURL('image/jpeg', 0.7);
+                                const imgWidth = 160;
+                                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                                doc.addImage(imgData, 'JPEG', 26, yPos - 3, imgWidth, imgHeight);
+                                yPos += imgHeight + 5;
+                            } catch (error) {
+                                console.error('Error converting Telugu option to image:', error);
+                                doc.text(opt, 26, yPos);
+                                yPos += 7;
+                            }
+
+                            document.body.removeChild(tempOptionDiv);
+                        } else {
+                            // Regular text option
+                            const optionLines = doc.splitTextToSize(opt, 160);
+                            doc.text(optionLines, 26, yPos);
+                            yPos += optionLines.length * 7;
+                        }
+
+                        // Add status indicator
+                        let statusText = '';
+                        let statusColor = [0, 0, 0]; // Default black
+
+                        if (isCorrect && isSelected) {
+                            statusText = '✓ Your answer (Correct)';
+                            statusColor = [0, 128, 0]; // Green
+                        } else if (isCorrect) {
+                            statusText = '✓ Correct answer';
+                            statusColor = [0, 128, 0]; // Green
+                        } else if (isWrongSelection) {
+                            statusText = '✗ Your answer (Incorrect)';
+                            statusColor = [255, 0, 0]; // Red
+                        }
+
+                        if (statusText) {
+                            doc.setTextColor(...statusColor);
+                            doc.text(statusText, 26, yPos - 3);
+                            doc.setTextColor(0, 0, 0); // Reset to black
+                        }
+
+                        yPos += 5;
                     }
 
-                    if (statusText) {
-                        doc.setTextColor(...statusColor);
-                        doc.text(statusText, 26, yPos - 3);
-                        doc.setTextColor(0, 0, 0); // Reset to black
-                    }
-
-                    yPos += 5;
+                    yPos += 10;
                 }
 
-                yPos += 10;
+                // Save the PDF - different method for mobile
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    // For mobile devices
+                    const pdfData = doc.output('datauristring');
+                    const link = document.createElement('a');
+                    link.href = pdfData;
+                    link.download = `Day_${day}_Quiz_Report_User_${userId}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    // For desktop
+                    doc.save(`Day_${day}_Quiz_Report_User_${userId}.pdf`);
+                }
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again.');
+            } finally {
+                // Restore button state
+                downloadPdfBtn.innerHTML = originalText;
+                downloadPdfBtn.disabled = false;
             }
-
-            // Save the PDF
-            doc.save(`Day_${day}_Quiz_Report_User_${userId}.pdf`);
         }
 
-        // Redirect to performance analysis
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // // Redirect to performance analysis
         function redirectToAnalysis() {
             window.location.href = `/score-board?user_id=${userId}&day=${day}`;
         }

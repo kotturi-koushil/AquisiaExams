@@ -359,8 +359,8 @@
                 <li class="main-nav-item">
                     <a href="{{url_for('user_results')}}" class="main-nav-link">Scoreboard</a>
                 </li>
-                  <li class="nav-item">
-                    <a href="{{url_for('profile')}}" class="nav-link">My Profile</a>
+                  <li class="main-nav-item">
+                    <a href="{{url_for('profile')}}" class="main-nav-link">My Profile</a>
                 </li>
                 {% if 'user_id' in session %}
                 <li class="main-nav-item">
@@ -386,7 +386,7 @@
                 <div class="col-md-8 student-info">
                     <h2><i class="fas fa-user-graduate me-2"></i> {{ data.student_name }}</h2>
                     <p class="mb-0">
-                        <i class="fas fa-calendar-day me-2"></i> Day {{ data.day }} First Attempt Results
+                        <i class="fas fa-calendar-day me-2"></i> Day {{ data.day }} Results
                         <span class="mx-3">|</span>
                         <i class="fas fa-map-marker-alt me-2"></i>
                         <span class="district-name">{{ data.district }}</span>

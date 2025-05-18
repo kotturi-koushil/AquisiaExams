@@ -289,7 +289,7 @@ def subscription():
                 )
                 
             except Exception as e:
-                flash(f"Error creating payment order: {str(e)}", "error")
+                flash(f"Please Try again by Clicking On Subscribe Now Button", "error")
         
         return render_template("subscription.html", has_subscription=has_subscription)
         
@@ -335,7 +335,6 @@ def exams():
             "new_exams.html", days=distinct_days, get_day_info=get_day_info
         )
     except Exception as e:
-        flash(f"Error loading exams: {str(e)}", "error")
         return redirect(url_for("index"))
     finally:
         if curr:

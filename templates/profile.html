@@ -960,7 +960,7 @@
                     <h3 class="stat-title">Last Attempt</h3>
                     <div class="stat-value">
                         {% if stats.days_since_last_attempt is not none %}
-                        {{ stats.days_since_last_attempt }} back
+                        {{ last_attempt }} days ago
                         {% else %}
                         Never
                         {% endif %}

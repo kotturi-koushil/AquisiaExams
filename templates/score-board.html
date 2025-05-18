@@ -359,6 +359,9 @@
                 <li class="main-nav-item">
                     <a href="{{url_for('user_results')}}" class="main-nav-link">Scoreboard</a>
                 </li>
+                  <li class="nav-item">
+                    <a href="{{url_for('profile')}}" class="nav-link">My Profile</a>
+                </li>
                 {% if 'user_id' in session %}
                 <li class="main-nav-item">
                     <a href="{{ url_for('logout') }}" class="main-nav-link">Logout</a>

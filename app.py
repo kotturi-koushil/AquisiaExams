@@ -230,6 +230,7 @@ def index():
 @app.route("/profile")
 @login_required
 def profile():
+    from datetime import datetime, timedelta
     conn = None
     cursor = None
     try:

@@ -260,6 +260,18 @@ def profile():
         
         # Calculate accuracy
         accuracy = round((stats['total_correct'] / stats['total_questions']) * 100, 2) if stats['total_questions'] else 0
+
+        cursor.execute("""
+            SELECT DATE(completed_at) as attempt_date 
+            FROM quiz_results 
+            WHERE user_email = %s 
+            ORDER BY completed_at DESC
+            limit 1
+        """, (user_email,))
+
+        fetched_last = cursor.fetchone()
+
+        last_attempt = (datetime.now().date()-fetched_last['attempt_date']).days
         
         # Get streak data
         cursor.execute("""
@@ -289,7 +301,7 @@ def profile():
                             user=user,
                             stats=stats,
                             accuracy=accuracy,
-                            current_streak=current_streak)
+                            current_streak=current_streak,last_attempt = last_attempt)
         
     except Exception as e:
         flash(f"Error loading profile: {str(e)}", "error")

@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Aquisia Exams</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Your existing navbar and footer CSS remains unchanged */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --success: #4cc9f0;
+            --success-dark: #4895ef;
+            --warning: #f72585;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --nav-bg: #0a1a3a;
+            --footer-bg: #2c3e50;
+            --page-bg: #f8f9fa;
+            --border-radius: 12px;
+            --locked: #bdc3c7;
+            --locked-dark: #7f8c8d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
+        }
+
+        .alert {
+            padding: 14px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 80px;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .navbar-brand img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-item {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: var(--success);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--success);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .navbar-toggler {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Mobile menu styles */
+        .navbar-nav.active {
+            display: flex;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 1rem;
+            background-color: var(--bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .days-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .day-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .day-header.locked {
+            background: linear-gradient(135deg, var(--locked), var(--locked-dark));
+        }
+
+        .day-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .day-body {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-topic {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+        }
+
+        .day-description {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .day-footer {
+            padding: 0 20px 20px;
+            text-align: center;
+        }
+
+        .day-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .start-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .locked-btn {
+            background: var(--locked);
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .locked-icon {
+            margin-right: 8px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--footer-bg);
+            color: white;
+            padding: 3rem 0 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .social-links {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-link {
+            color: white;
+            font-size: 1.3rem;
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        .social-link:hover {
+            color: var(--success);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .navbar {
+                height: 70px;
+                padding: 0.5rem 1rem;
+            }
+
+            .navbar-nav {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                right: 0;
+                background-color: var(--nav-bg);
+                flex-direction: column;
+                width: 100%;
+                margin-top: 0;
+                padding: 1rem 0;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .navbar-nav.active {
+                left: 0;
+                display: flex;
+            }
+
+            .nav-item {
+                margin: 0.75rem 0;
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-link::after {
+                display: none;
+            }
+
+            .navbar-toggler {
+                display: block;
+            }
+
+            .days-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .day-btn {
+                max-width: 100%;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .day-card {
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+            animation-delay: calc(var(--order) * 0.1s);
+        }
+
+
+        /* New Profile Page Styles */
+
+        .profile-page {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: calc(100vh - 80px);
+            padding: 3rem 1rem;
+        }
+
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Profile Header with Animated Gradient */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0, #f72585);
+            background-size: 200% 200%;
+            animation: gradientBG 8s ease infinite;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-right: 2rem;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-name::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0);
+            border-radius: 3px;
+        }
+
+        .profile-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: #5a6a7e;
+            font-size: 0.95rem;
+        }
+
+        .profile-detail i {
+            width: 20px;
+            color: #4361ee;
+            margin-right: 10px;
+        }
+
+        .premium-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #4cc9f0, #4895ef);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 10px;
+            box-shadow: 0 3px 10px rgba(76, 201, 240, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        /* Stats Cards with Hover Effects */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            color: #4361ee;
+            margin-bottom: 1rem;
+            width: 50px;
+            height: 50px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            color: #5a6a7e;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-detail {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* Streak Card Special Styling */
+        .streak-card {
+            background: linear-gradient(135deg, #f72585, #b5179e);
+            color: white;
+        }
+
+        .streak-card::after {
+            background: white;
+        }
+
+        .streak-card .stat-icon {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .streak-card .stat-title,
+        .streak-card .stat-value,
+        .streak-card .stat-detail {
+            color: white;
+        }
+
+        .streak-fire {
+            animation: firePulse 1.5s infinite;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0);
+            border-radius: 3px;
+        }
+
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #5a6a7e;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4361ee, #4cc9f0);
+            border-radius: 5px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            animation: progressShine 2s infinite;
+        }
+
+        /* Animations */
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes firePulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes progressShine {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem 1.5rem;
+            }
+
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+            }
+
+            .profile-name::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Floating Action Button */
+        .action-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(67, 97, 238, 0.4);
+            z-index: 100;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.6);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Your existing navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='877d97b9-824a-4e8d-831f-69978a4253fd.webp') }}" alt="Logo">
+                <span>Aquisia-Exams</span>
+            </a>
+
+            <button class="navbar-toggler" id="navbarToggler">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav" id="navbarNav">
+                <li class="nav-item">
+                    <a href="{{url_for('index')}}" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{url_for('days')}}" class="nav-link">Daily Exams</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{url_for('user_results')}}" class="nav-link">Scoreboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{url_for('profile')}}" class="nav-link">My Profile</a>
+                </li>
+                {% if 'user_id' in session %}
+                <li class="nav-item">
+                    <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('register') }}" class="nav-link">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- New Profile Page Content -->
+    <main class="profile-page">
+        <div class="profile-container">
+            <!-- Profile Header -->
+            <section class="profile-header">
+                <div class="profile-avatar">
+                    {{ user.name[0].upper() }}
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name">{{ user.name }}</h1>
+                    <div class="profile-detail">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ user.email }}</span>
+                    </div>
+                    <div class="profile-detail">
+                        <i class="fas fa-phone"></i>
+                        <span>{{ user.phone }}</span>
+                    </div>
+                    <div class="profile-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ user.district }} • {{ user.category }}</span>
+                    </div>
+                    <div class="profile-detail">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Member since {{ user.join_date }}</span>
+                    </div>
+                    {% if user.subscription %}
+                    <div class="premium-badge">
+                        <i class="fas fa-crown"></i> Premium Member
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Stats Grid -->
+
+
+            <section class="stats-grid">
+
+                <div class="stat-card streak-card" style="animation-delay: 0.3s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-fire streak-fire"></i>
+                    </div>
+                    <h3 class="stat-title">Current Streak</h3>
+                    <div class="stat-value">{{ current_streak }}</div>
+                    <p class="stat-detail">
+                        {% if current_streak > 0 %}
+                        🔥 Keep the streak alive!
+                        {% else %}
+                        Start your streak today!
+                        {% endif %}
+                    </p>
+                </div>
+                <!-- Exams Attempted -->
+                <div class="stat-card" style="animation-delay: 0.1s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="stat-title">Exams Attempted</h3>
+                    <div class="stat-value">{{ stats.exams_attempted or 0 }}</div>
+                    <p class="stat-detail">Total practice sessions completed</p>
+                </div>
+
+                <!-- Accuracy -->
+                <div class="stat-card" style="animation-delay: 0.2s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="stat-title">Overall Accuracy</h3>
+                    <div class="stat-value">{{ accuracy }}%</div>
+                    <p class="stat-detail">{{ stats.total_correct or 0 }} correct answers</p>
+                </div>
+
+                <!-- Streak -->
+
+                <!-- Last Attempt -->
+                <div class="stat-card" style="animation-delay: 0.4s;">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="stat-title">Last Attempt</h3>
+                    <div class="stat-value">
+                        {% if stats.days_since_last_attempt is not none %}
+                        {{ stats.days_since_last_attempt }} back
+                        {% else %}
+                        Never
+                        {% endif %}
+                    </div>
+                    <p class="stat-detail">
+                        <a href="{{ url_for('days') }}" class="btn btn-primary"
+                            style="padding: 8px 16px; margin-top: 8px; display: inline-block;">
+                            <i class="fas fa-play"></i> Practice Now
+                        </a>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+
+        </div>
+
+        <!-- Floating Action Button -->
+        <a href="{{ url_for('days') }}" class="action-btn">
+            <i class="fas fa-play"></i>
+        </a>
+    </main>
+
+    <!-- Your existing footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">About Us</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <div class="copyright">
+                &copy; 2025 Aquisia-Exams. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Your existing navbar toggle script
+
+        document.getElementById('navbarToggler').addEventListener('click', function () {
+            const nav = document.getElementById('navbarNav');
+            nav.classList.toggle('active');
+
+            // Change icon based on menu state
+            const icon = this.querySelector('i');
+            if (nav.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const nav = document.getElementById('navbarNav');
+                nav.classList.remove('active');
+                const toggler = document.getElementById('navbarToggler');
+                const icon = toggler.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Add animation delay to cards
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.day-card');
+            cards.forEach((card, index) => {
+                card.style.setProperty('--order', index);
+            });
+        });
+
+        // Animate elements on scroll
+        document.addEventListener('DOMContentLoaded', function () {
+            const statCards = document.querySelectorAll('.stat-card');
+
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.animation = `fadeIn 0.6s ease forwards ${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>

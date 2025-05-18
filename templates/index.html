@@ -31,6 +31,8 @@
             --error: #f72585;
             --secondary: #4cc9f0;
             --dark: #001e4d;
+            --exam-banner-bg: linear-gradient(135deg, #4361ee, #3a0ca3);
+            --exam-banner-accent: #4cc9f0;
             --light: #f8f9fa;
         }
 
@@ -39,6 +41,88 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        .exam-banner {
+            background: var(--exam-banner-bg);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin: 2rem auto;
+            max-width: 900px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--exam-banner-accent);
+        }
+
+        .exam-banner::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            animation: rotate 15s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .exam-banner-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .exam-banner h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .exam-banner p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .exam-banner .btn {
+            background: white;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .exam-banner .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Ribbon for "New" tag */
+        .new-ribbon {
+            position: absolute;
+            top: 10px;
+            right: -30px;
+            background: var(--warning);
+            color: white;
+            padding: 5px 30px;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+
 
         body {
             font-family: 'Poppins', sans-serif;
@@ -472,6 +556,15 @@
 
         /* Responsive Styles */
         @media (max-width: 768px) {
+            .exam-banner {
+                padding: 1.5rem;
+                margin: 1.5rem;
+            }
+
+            .exam-banner h3 {
+                font-size: 1.5rem;
+            }
+
             body {
                 padding-top: 70px;
             }
@@ -593,9 +686,6 @@
                 <li class="nav-item">
                     <a href="{{url_for('user_results')}}" class="nav-link">Scoreboard</a>
                 </li>
-                 <li class="nav-item">
-                    <a href="{{url_for('profile')}}" class="nav-link">My Profile</a>
-                </li>
                 {% if 'user_id' in session %}
                 <li class="nav-item">
                     <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
@@ -623,6 +713,20 @@
             </div>
         </div>
     </section>
+
+    <!-- New Exam Wrapper Section -->
+    {% if max_day %}
+    <div class="exam-banner">
+        <div class="new-ribbon">NEW</div>
+        <div class="exam-banner-content">
+            <h3>📢 DAY - {{max_day}} Exam Available!</h3>
+            <p>Day {{ max_day }} questions have been added. Test your knowledge now!</p>
+            <a href="{{ url_for('quiz', day=max_day) }}" class="btn">
+                <i class="fas fa-play-circle"></i> Start Exam
+            </a>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Features Section -->
     <section class="features">
@@ -694,11 +798,28 @@
     </section>
 
     <!-- CTA Section -->
+    {% if 'user_id' not in session %}
     <section class="cta">
-        <h2>Ready to Start Your Exam Preparation?</h2>
-        <p>Join thousands of students who are already improving their performance with Aquisia.</p>
-        <a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up Now</a>
+        <h2>Ready to Boost Your Performance?</h2>
+        <p>Join our community of achievers today</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('login') }}" class="btn btn-outline">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="{{ url_for('register') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Sign Up Free
+            </a>
+        </div>
     </section>
+    {% else %}
+    <!-- Optional: Show something else for logged-in users -->
+    <section class="cta">
+        <h2>Want to Practice More?</h2>
+        <a href="{{ url_for('days') }}" class="btn btn-primary">
+            <i class="fas fa-calendar-alt"></i> View Daily Exams
+        </a>
+    </section>
+    {% endif %}
 
     <!-- Footer -->
     <footer class="footer">

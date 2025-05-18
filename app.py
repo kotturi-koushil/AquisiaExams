@@ -200,6 +200,106 @@ razorpay_client = razorpay.Client(
     auth=(os.getenv("RAZORPAY_KEY_ID"), os.getenv("RAZORPAY_KEY_SECRET"))
 )
 
+@app.route("/")
+def index():
+    conn = None
+    curr = None
+    print("I am In")
+    try:
+        conn = get_db_connection()
+        curr = conn.cursor()
+        
+        # Get the maximum day from questions
+        curr.execute("SELECT MAX(day) as max_day FROM questions")
+        result = curr.fetchone()
+        print(result[0])
+        max_day = result[0] if result else None
+        print(max_day)
+        
+        return render_template("index.html", max_day=max_day)
+        
+    except Exception as e:
+        flash(f"Error loading page: {str(e)}", "error")
+        return render_template("index.html", max_day=None)
+    finally:
+        if curr:
+            curr.close()
+        if conn:
+            conn.close()
+
+@app.route("/profile")
+@login_required
+def profile():
+    conn = None
+    cursor = None
+    try:
+        user_email = session.get("user_email")
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Get user details
+        cursor.execute("""
+            SELECT name, email, phone, district, category, subscription, 
+                   DATE_FORMAT(created_at, '%Y-%m-%d') as join_date
+            FROM users 
+            WHERE email = %s
+        """, (user_email,))
+        user = cursor.fetchone()
+        
+        # Get exam statistics
+        cursor.execute("""
+            SELECT 
+                COUNT(DISTINCT day) as exams_attempted,
+                SUM(total_score) as total_correct,
+                SUM(total_questions) as total_questions,
+                MAX(DATEDIFF(NOW(), completed_at)) as days_since_last_attempt
+            FROM quiz_results 
+            WHERE user_email = %s
+        """, (user_email,))
+        stats = cursor.fetchone()
+        
+        # Calculate accuracy
+        accuracy = round((stats['total_correct'] / stats['total_questions']) * 100, 2) if stats['total_questions'] else 0
+        
+        # Get streak data
+        cursor.execute("""
+            SELECT DATE(completed_at) as attempt_date 
+            FROM quiz_results 
+            WHERE user_email = %s 
+            ORDER BY completed_at DESC
+        """, (user_email,))
+        attempts = [row['attempt_date'] for row in cursor.fetchall()]
+        
+        current_streak = 0
+        if attempts:
+            from datetime import datetime, timedelta
+            today = datetime.now().date()
+            streak_date = today
+            current_streak = 0
+            
+            # Check for consecutive days
+            for i, attempt_date in enumerate(attempts):
+                if attempt_date == streak_date:
+                    current_streak += 1
+                    streak_date -= timedelta(days=1)
+                else:
+                    break
+        
+        return render_template("profile.html", 
+                            user=user,
+                            stats=stats,
+                            accuracy=accuracy,
+                            current_streak=current_streak)
+        
+    except Exception as e:
+        flash(f"Error loading profile: {str(e)}", "error")
+        return redirect(url_for("index"))
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 
 @app.route("/days")
 @login_required
@@ -237,9 +337,6 @@ def days():
             conn.close()
 
 
-@app.route("/")
-def index():
-    return render_template("index.html")
 
 
 @app.route("/subscription", methods=["GET", "POST"])

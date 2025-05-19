@@ -493,13 +493,13 @@ def quiz(day):
 
         # Fetch questions
         curr.execute(
-            """
-            SELECT day, question, option_a, option_b, option_c, option_d, 
-                   correct_option, subject 
-            FROM questions 
-            WHERE day = %s
-            """,
-            (day,),
+                """
+                SELECT day, question, option_a, option_b, option_c, option_d, 
+                    correct_option, subject, explanation 
+                FROM questions 
+                WHERE day = %s
+                """,
+                (day,),
         )
         questions = curr.fetchall()
 
@@ -522,6 +522,8 @@ def quiz(day):
             curr.close()
         if conn:
             conn.close()
+
+
 from razorpay import Client
 from razorpay.errors import SignatureVerificationError  # Correct import path
 
@@ -684,7 +686,7 @@ def quiz1():
         curr.execute(
             """
             SELECT day, question, option_a, option_b, option_c, option_d, 
-                   correct_option, subject 
+                   correct_option, subject,explanation
             FROM sample
             WHERE day = %s
         """,

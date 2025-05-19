@@ -289,14 +289,16 @@ def profile():
             today = datetime.now().date()
             streak_date = today
             current_streak = 0
-            
             # Check for consecutive days
-            for i, attempt_date in enumerate(attempts):
-                if attempt_date == streak_date:
-                    current_streak += 1
-                    streak_date -= timedelta(days=1)
+            for i in range(len(attempts)-1):
+                if(attempts[i]+timedelta(days = 1) == attempts[i+1]):
+                    current_streak = current_streak+1
                 else:
-                    break
+                    current_streak = 0
+            if(attempts[len(attempts)-1]+timedelta(days=1)==today):
+                current_streak = current_streak+1
+            else:
+                current_streak = 0
         
         return render_template("profile.html", 
                             user=user,

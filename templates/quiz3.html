@@ -624,7 +624,7 @@
                 <li class="nav-item">
                     <a href="{{url_for('user_results')}}" class="nav-link">Scoreboard</a>
                 </li>
-                  <li class="nav-item">
+                <li class="nav-item">
                     <a href="{{url_for('profile')}}" class="nav-link">My Profile</a>
                 </li>
                 {% if 'user_id' in session %}
@@ -1106,6 +1106,7 @@
                 // Process questions one by one to handle Telugu text
                 for (let i = 0; i < questions.length; i++) {
                     const q = userAnswers[i];
+                    const questionData = questions[i]; // Get the full question data including explanation
 
                     // Check if we need a new page
                     if (yPos > 250) {
@@ -1236,6 +1237,59 @@
                         yPos += 5;
                     }
 
+                    // Add explanation if available
+                    if (questionData.explanation) {
+                        doc.setFontSize(12);
+                        doc.setFont(undefined, 'bold');
+                        doc.setTextColor(0, 0, 128); // Navy blue for explanation heading
+                        doc.text('Explanation:', 14, yPos);
+                        doc.setFont(undefined, 'normal');
+                        doc.setTextColor(0, 0, 0); // Reset to black
+                        yPos += 7;
+
+                        // Check if explanation contains Telugu text
+                        const isTeluguExplanation = /[\u0C00-\u0C7F]/.test(questionData.explanation);
+
+                        if (isTeluguExplanation) {
+                            // Handle Telugu explanation with image
+                            const tempExplanationDiv = document.createElement('div');
+                            tempExplanationDiv.style.position = 'absolute';
+                            tempExplanationDiv.style.left = '-9999px';
+                            tempExplanationDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
+                            tempExplanationDiv.style.fontSize = '12px';
+                            tempExplanationDiv.style.width = '180mm';
+                            tempExplanationDiv.textContent = questionData.explanation;
+                            document.body.appendChild(tempExplanationDiv);
+
+                            try {
+                                const canvas = await html2canvas(tempExplanationDiv, {
+                                    scale: 1,
+                                    logging: false,
+                                    useCORS: true
+                                });
+
+                                const imgData = canvas.toDataURL('image/jpeg', 0.7);
+                                const imgWidth = 180;
+                                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                                doc.addImage(imgData, 'JPEG', 14, yPos, imgWidth, imgHeight);
+                                yPos += imgHeight + 10;
+                            } catch (error) {
+                                console.error('Error converting Telugu explanation to image:', error);
+                                const explanationLines = doc.splitTextToSize(questionData.explanation, 180);
+                                doc.text(explanationLines, 14, yPos);
+                                yPos += explanationLines.length * 7 + 5;
+                            }
+
+                            document.body.removeChild(tempExplanationDiv);
+                        } else {
+                            // Regular text explanation
+                            const explanationLines = doc.splitTextToSize(questionData.explanation, 180);
+                            doc.text(explanationLines, 14, yPos);
+                            yPos += explanationLines.length * 7 + 5;
+                        }
+                    }
+
                     yPos += 10;
                 }
 
@@ -1262,23 +1316,6 @@
                 downloadPdfBtn.disabled = false;
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // // Redirect to performance analysis
         function redirectToAnalysis() {

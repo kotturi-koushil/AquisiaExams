@@ -297,8 +297,8 @@ def profile():
                     current_streak = 0
             if(attempts[len(attempts)-1]+timedelta(days=1)==today):
                 current_streak = current_streak+1
-            else:
-                current_streak = 0
+            if(attempts[len(attempts)-1]+timedelta(days = 1)==today+timedelta(days = 1)):
+                current_streak = current_streak+1
         
         return render_template("profile.html", 
                             user=user,

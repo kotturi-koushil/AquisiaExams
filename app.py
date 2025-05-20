@@ -324,24 +324,17 @@ def days():
     try:
         conn = get_db_connection()
         curr = conn.cursor(dictionary=True)
-
-        # Fetch all syllabus days with information about whether questions exist
-        curr.execute(
-            """
-            SELECT s.day, s.topic, s.description, 
-                   CASE WHEN q.day IS NOT NULL THEN 1 ELSE 0 END as has_questions
+        # Get syllabus data with question counts
+        curr.execute("""
+            SELECT s.day, s.topic, s.description, s.total_questions_of_day,
+                   (SELECT COUNT(*) FROM questions q WHERE q.day = s.day) AS actual_questions_count
             FROM syllabus s
-            LEFT JOIN (
-                SELECT DISTINCT day FROM questions
-            ) q ON s.day = q.day
             ORDER BY s.day
-        """
-        )
-
+        """)
         syllabus = curr.fetchall()
-
-        return render_template("days.html", syllabus=syllabus)
-
+        # Debug output (optional)
+        print("Syllabus data:", syllabus) 
+        return render_template('days.html', syllabus=syllabus)
     except Exception as e:
         flash(f"Error loading days: {str(e)}", "error")
         return redirect(url_for("index"))

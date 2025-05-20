@@ -501,11 +501,11 @@
 
 
             <!-- DAY CONTAINER -->
-
-            <div class="days-container">
+                 <div class="days-container">
                 {% for day in syllabus %}
                 <div class="day-card" style="--order: {{ loop.index }}">
-                    <div class="day-header {% if not day.has_questions %}locked{% endif %}">
+                    <div
+                        class="day-header {% if day.actual_questions_count >= day.total_questions_of_day %}{% else %}locked{% endif %}">
                         <h3>Day {{ day.day }}</h3>
                     </div>
 
@@ -514,21 +514,24 @@
                         <div class="day-description">
                             {{ day.description if day.description else "Test your knowledge on this topic with our
                             carefully curated questions." }}
+                            <br><small></small>
                         </div>
                     </div>
 
                     <div class="day-footer">
-                        {% if day.has_questions %}
+                        {% if day.actual_questions_count >= day.total_questions_of_day %}
                         <a href="/quiz/{{ day.day }}" class="day-btn start-btn">Start Quiz</a>
                         {% else %}
                         <button class="day-btn locked-btn" disabled>
-                            <i class="fas fa-lock locked-icon"></i> Locked
+                            <i class="fas fa-lock locked-icon"></i>
+                            Locked
                         </button>
                         {% endif %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            
         </div>
     </main>
 

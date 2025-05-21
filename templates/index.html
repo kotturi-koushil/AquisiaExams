@@ -729,6 +729,17 @@
             </a>
         </div>
     </div>
+    {% else %}
+    <div class="exam-banner">
+        <div class="new-ribbon">NEW</div>
+        <div class="exam-banner-content">
+            <h3>📢 Sample Test Available!</h3>
+            <p>Sample Test questions have been added. Test your knowledge now!</p>
+            <a href="{{ url_for('quiz1') }}" class="btn">
+                <i class="fas fa-play-circle"></i> Start Exam
+            </a>
+        </div>
+    </div>
     {% endif %}
 
     <!-- Features Section -->

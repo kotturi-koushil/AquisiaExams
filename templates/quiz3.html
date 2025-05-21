@@ -1052,7 +1052,7 @@
 
 
         //generating pdf
-        async function generatePdfReport() {
+ async function generatePdfReport() {
             // Show loading indicator for mobile users
             const originalText = downloadPdfBtn.innerHTML;
             downloadPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
@@ -1119,16 +1119,17 @@
                     doc.setFont(undefined, 'bold');
                     doc.text(`${i + 1}.`, 14, yPos);
 
-                    // Handle question text (check if it's Telugu)
+                    // Handle question text (check if it contains Telugu)
                     if (q.isTelugu) {
-                        // Create a temporary div to render the Telugu text
+                        // Create a temporary div to render the Telugu text with proper formatting
                         const tempDiv = document.createElement('div');
                         tempDiv.style.position = 'absolute';
                         tempDiv.style.left = '-9999px';
                         tempDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
                         tempDiv.style.fontSize = '12px';
                         tempDiv.style.width = '180mm';
-                        tempDiv.innerHTML = q.question;
+                        tempDiv.style.whiteSpace = 'pre-line'; // Preserve line breaks
+                        tempDiv.innerHTML = q.question.replace(/\n/g, '<br>');
                         document.body.appendChild(tempDiv);
 
                         // Convert to image
@@ -1149,14 +1150,15 @@
                         } catch (error) {
                             console.error('Error converting Telugu text to image:', error);
                             // Fallback to text if image conversion fails
-                            doc.text(q.question, 20, yPos);
-                            yPos += 10;
+                            const questionLines = doc.splitTextToSize(q.question, 180);
+                            doc.text(questionLines, 20, yPos);
+                            yPos += questionLines.length * 7;
                         }
 
                         document.body.removeChild(tempDiv);
                     } else {
-                        // Regular text question
-                        const questionLines = doc.splitTextToSize(q.question, 180);
+                        // Regular text question - handle line breaks properly
+                        const questionLines = doc.splitTextToSize(q.question.replace(/\n/g, ' '), 180);
                         doc.text(questionLines, 20, yPos);
                         yPos += questionLines.length * 7;
                     }
@@ -1183,7 +1185,8 @@
                             tempOptionDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
                             tempOptionDiv.style.fontSize = '12px';
                             tempOptionDiv.style.width = '160mm';
-                            tempOptionDiv.textContent = opt;
+                            tempOptionDiv.style.whiteSpace = 'pre-line'; // Preserve line breaks
+                            tempOptionDiv.innerHTML = opt.replace(/\n/g, '<br>');
                             document.body.appendChild(tempOptionDiv);
 
                             try {
@@ -1201,14 +1204,15 @@
                                 yPos += imgHeight + 5;
                             } catch (error) {
                                 console.error('Error converting Telugu option to image:', error);
-                                doc.text(opt, 26, yPos);
-                                yPos += 7;
+                                const optionLines = doc.splitTextToSize(opt, 160);
+                                doc.text(optionLines, 26, yPos);
+                                yPos += optionLines.length * 7;
                             }
 
                             document.body.removeChild(tempOptionDiv);
                         } else {
-                            // Regular text option
-                            const optionLines = doc.splitTextToSize(opt, 160);
+                            // Regular text option - handle line breaks properly
+                            const optionLines = doc.splitTextToSize(opt.replace(/\n/g, ' '), 160);
                             doc.text(optionLines, 26, yPos);
                             yPos += optionLines.length * 7;
                         }
@@ -1258,7 +1262,8 @@
                             tempExplanationDiv.style.fontFamily = 'Noto Sans Telugu, sans-serif';
                             tempExplanationDiv.style.fontSize = '12px';
                             tempExplanationDiv.style.width = '180mm';
-                            tempExplanationDiv.textContent = questionData.explanation;
+                            tempExplanationDiv.style.whiteSpace = 'pre-line'; // Preserve line breaks
+                            tempExplanationDiv.innerHTML = questionData.explanation.replace(/\n/g, '<br>');
                             document.body.appendChild(tempExplanationDiv);
 
                             try {
@@ -1283,8 +1288,8 @@
 
                             document.body.removeChild(tempExplanationDiv);
                         } else {
-                            // Regular text explanation
-                            const explanationLines = doc.splitTextToSize(questionData.explanation, 180);
+                            // Regular text explanation - handle line breaks properly
+                            const explanationLines = doc.splitTextToSize(questionData.explanation.replace(/\n/g, ' '), 180);
                             doc.text(explanationLines, 14, yPos);
                             yPos += explanationLines.length * 7 + 5;
                         }
@@ -1316,6 +1321,8 @@
                 downloadPdfBtn.disabled = false;
             }
         }
+
+
 
         // // Redirect to performance analysis
         function redirectToAnalysis() {

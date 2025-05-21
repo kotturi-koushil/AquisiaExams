@@ -210,7 +210,7 @@ def index():
         curr = conn.cursor()
         
         # Get the maximum day from questions
-        curr.execute("SELECT MAX(day) as max_day FROM questions")
+        curr.execute("SELECT MAX(day) as max_day FROM last_day")
         result = curr.fetchone()
         print(result[0])
         max_day = result[0] if result else None

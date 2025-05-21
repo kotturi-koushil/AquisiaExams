@@ -247,64 +247,106 @@ def profile():
         """, (user_email,))
         user = cursor.fetchone()
         
+        if not user:
+            flash("User not found", "error")
+            return redirect(url_for("index"))
+        
+        # Initialize default stats
+        stats = {
+            'exams_attempted': 0,
+            'total_correct': 0,
+            'total_questions': 0,
+            'days_since_last_attempt': None
+        }
+        accuracy = 0
+        current_streak = 0
+        last_attempt = "Never"
+        max_streak = 0
+        
         # Get exam statistics
         cursor.execute("""
             SELECT 
                 COUNT(DISTINCT day) as exams_attempted,
                 SUM(total_score) as total_correct,
                 SUM(total_questions) as total_questions,
-                MAX(DATEDIFF(NOW(), completed_at)) as days_since_last_attempt
+                MAX(completed_at) as last_attempt_date
             FROM quiz_results 
             WHERE user_email = %s
         """, (user_email,))
-        stats = cursor.fetchone()
+        stats_result = cursor.fetchone()
         
-        # Calculate accuracy
-        accuracy = round((stats['total_correct'] / stats['total_questions']) * 100, 2) if stats['total_questions'] else 0
-
+        if stats_result and stats_result['exams_attempted']:
+            stats['exams_attempted'] = stats_result['exams_attempted']
+            stats['total_correct'] = stats_result['total_correct'] or 0
+            stats['total_questions'] = stats_result['total_questions'] or 0
+            
+            # Calculate accuracy
+            if stats['total_questions'] > 0:
+                accuracy = round((stats['total_correct'] / stats['total_questions']) * 100, 2)
+            
+            # Calculate days since last attempt
+            if stats_result['last_attempt_date']:
+                last_attempt_date = stats_result['last_attempt_date']
+                if isinstance(last_attempt_date, str):
+                    last_attempt_date = datetime.strptime(last_attempt_date, '%Y-%m-%d %H:%M:%S')
+                days_since = (datetime.now() - last_attempt_date).days
+                stats['days_since_last_attempt'] = days_since
+                last_attempt = f"{days_since}"
+        
+        # Get all attempt dates for streak calculation
         cursor.execute("""
             SELECT DATE(completed_at) as attempt_date 
             FROM quiz_results 
             WHERE user_email = %s 
-            ORDER BY completed_at DESC
-            limit 1
-        """, (user_email,))
-
-        fetched_last = cursor.fetchone()
-
-        last_attempt = (datetime.now().date()-fetched_last['attempt_date']).days
-        
-        # Get streak data
-        cursor.execute("""
-            SELECT DATE(completed_at) as attempt_date 
-            FROM quiz_results 
-            WHERE user_email = %s 
-            ORDER BY completed_at DESC
+            ORDER BY attempt_date DESC
         """, (user_email,))
         attempts = [row['attempt_date'] for row in cursor.fetchall()]
         
-        current_streak = 0
+        # Calculate current streak and max streak
         if attempts:
-            from datetime import datetime, timedelta
-            today = datetime.now().date()
-            streak_date = today
+            # Convert strings to date objects if needed
+            if isinstance(attempts[0], str):
+                attempts = [datetime.strptime(d, '%Y-%m-%d').date() for d in attempts]
+            
+            # Remove duplicate dates
+            unique_dates = sorted(list(set(attempts)), reverse=True)
+            
             current_streak = 0
-            # Check for consecutive days
-            for i in range(len(attempts)-1):
-                if(attempts[i]+timedelta(days = 1) == attempts[i+1]):
-                    current_streak = current_streak+1
+            max_streak = 0
+            previous_date = None
+            
+            for i, date in enumerate(unique_dates):
+                if i == 0:
+                    current_streak = 1
+                    max_streak = 1
                 else:
-                    current_streak = 0
-            if(attempts[len(attempts)-1]+timedelta(days=1)==today):
-                current_streak = current_streak+1
-            if(attempts[len(attempts)-1]+timedelta(days = 1)==today+timedelta(days = 1)):
-                current_streak = current_streak+1
+                    if (previous_date - date) == timedelta(days=1):
+                        current_streak += 1
+                        if current_streak > max_streak:
+                            max_streak = current_streak
+                    else:
+                        current_streak = 1
+                previous_date = date
+            
+            # Check if current streak is still active (last attempt was yesterday or today)
+            today = datetime.now().date()
+            if unique_dates[0] == today:
+                # Last attempt was today - streak is current
+                pass
+            elif (today - unique_dates[0]).days == 1:
+                # Last attempt was yesterday - streak is still current
+                pass
+            else:
+                # Streak is broken
+                current_streak = 0
         
         return render_template("profile.html", 
                             user=user,
                             stats=stats,
                             accuracy=accuracy,
-                            current_streak=current_streak,last_attempt = last_attempt)
+                            current_streak=current_streak,
+                            max_streak=max_streak,
+                            last_attempt=last_attempt)
         
     except Exception as e:
         flash(f"Error loading profile: {str(e)}", "error")
@@ -314,6 +356,7 @@ def profile():
             cursor.close()
         if conn:
             conn.close()
+
 
 
 @app.route("/days")

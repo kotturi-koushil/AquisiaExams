@@ -1311,5 +1311,126 @@ def score_board():
         return jsonify({"error": "Server error", "details": str(e)}), 500
 
 
+from flask_mail import Mail,Message
+import os
+from datetime import datetime, timedelta
+import secrets
+import string
+
+# Configure Flask-Mail (using environment variables)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Your Gmail
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # App password
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+app.config['RESET_TOKEN_EXPIRY'] = 24  # Hours
+
+mail = Mail(app)
+
+def generate_reset_token():
+    """Generate a secure token for password reset"""
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(32))
+
+@app.route("/forgot-password", methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email').strip().lower()
+        
+        conn = get_db_connection()
+        curr = conn.cursor(dictionary=True)
+        
+        try:
+            # Check if user exists
+            curr.execute("SELECT id FROM users WHERE email = %s", (email,))
+            user = curr.fetchone()
+            
+            if user:
+                # Generate token and expiry
+                token = generate_reset_token()
+                expiry = datetime.now() + timedelta(hours=app.config['RESET_TOKEN_EXPIRY'])
+                
+                # Store in database
+                curr.execute("""
+                    UPDATE users 
+                    SET reset_token = %s, reset_token_expiry = %s 
+                    WHERE id = %s
+                """, (token, expiry, user['id']))
+                conn.commit()
+                
+                # Send email
+                reset_url = url_for('reset_password', token=token, _external=True)
+                msg = Message("Password Reset Request",
+                            recipients=[email])
+                msg.body = f"""To reset your password, click the link below:
+{reset_url}
+
+This link will expire in {app.config['RESET_TOKEN_EXPIRY']} hours.
+"""
+                mail.send(msg)
+                
+                flash("Password reset link has been sent to your email", "success")
+                return redirect(url_for('login'))
+            else:
+                flash("No account found with that email", "error")
+                
+        except Exception as e:
+            flash(f"Error: {str(e)}", "error")
+        finally:
+            curr.close()
+            conn.close()
+    
+    return render_template("forgot_password.html")
+
+@app.route("/reset-password/<token>", methods=['GET', 'POST'])
+def reset_password(token):
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        if password != confirm_password:
+            flash("Passwords don't match", "error")
+            return redirect(url_for('reset_password', token=token))
+        
+        conn = get_db_connection()
+        curr = conn.cursor(dictionary=True)
+        
+        try:
+            # Verify token
+            curr.execute("""
+                SELECT id FROM users 
+                WHERE reset_token = %s 
+                AND reset_token_expiry > %s
+            """, (token, datetime.now()))
+            user = curr.fetchone()
+            
+            if user:
+                # Update password and clear token
+                hashed_pw = generate_password_hash(password)
+                curr.execute("""
+                    UPDATE users 
+                    SET password = %s, 
+                        reset_token = NULL, 
+                        reset_token_expiry = NULL 
+                    WHERE id = %s
+                """, (hashed_pw, user['id']))
+                conn.commit()
+                
+                flash("Password updated successfully", "success")
+                return redirect(url_for('login'))
+            else:
+                flash("Invalid or expired token", "error")
+                return redirect(url_for('forgot_password'))
+                
+        except Exception as e:
+            flash(f"Error: {str(e)}", "error")
+        finally:
+            curr.close()
+            conn.close()
+    
+    return render_template("reset_password.html", token=token)
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=10000)

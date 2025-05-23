@@ -533,102 +533,6 @@
             transform: translateY(-2px);
         }
 
-        /* Review Questions Section */
-        .review-section {
-            margin-top: 40px;
-            text-align: left;
-            display: none;
-        }
-
-        .review-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--primary);
-            text-align: center;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .review-question {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .review-question:hover {
-            box-shadow: var(--shadow-hover);
-        }
-
-        .review-question-text {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            line-height: 1.5;
-            color: var(--text);
-            white-space: pre-line;
-        }
-
-        .review-option {
-            padding: 12px 15px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            border-left: 4px solid transparent;
-        }
-
-        .review-option.correct {
-            background-color: rgba(76, 175, 80, 0.1);
-            border-left-color: var(--correct);
-        }
-
-        .review-option.incorrect {
-            background-color: rgba(244, 67, 54, 0.1);
-            border-left-color: var(--incorrect);
-        }
-
-        .review-option.user-selected {
-            font-weight: 600;
-        }
-
-        .review-status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
-        .status-correct {
-            background-color: var(--correct);
-            color: white;
-        }
-
-        .status-incorrect {
-            background-color: var(--incorrect);
-            color: white;
-        }
-
-        .explanation-container {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--explanation-bg);
-            border-radius: 6px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .explanation-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--primary);
-        }
-
-        .explanation-text {
-            white-space: pre-line;
-            line-height: 1.5;
-        }
-
         /* Mobile Question Navigation */
         .mobile-nav-toggle {
             display: none;
@@ -1244,9 +1148,14 @@
                             color: var(--text);
                             padding: 20px;
                             line-height: 1.6;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            min-height: 100vh;
                         }
 
                         .review-container {
+                            width: 100%;
                             max-width: 800px;
                             margin: 0 auto;
                             background: white;
@@ -1271,6 +1180,7 @@
                             margin-bottom: 25px;
                             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                             transition: all 0.3s ease;
+                            width: 100%;
                         }
 
                         .review-question:hover {
@@ -1283,6 +1193,7 @@
                             line-height: 1.5;
                             color: var(--text);
                             white-space: pre-line;
+                            width: 100%;
                         }
 
                         .telugu-text {
@@ -1295,6 +1206,7 @@
                             border-radius: 6px;
                             margin-bottom: 8px;
                             border-left: 4px solid transparent;
+                            width: 100%;
                         }
 
                         .review-option.correct {
@@ -1336,6 +1248,7 @@
                             background-color: var(--explanation-bg);
                             border-radius: 6px;
                             border-left: 4px solid var(--primary);
+                            width: 100%;
                         }
 
                         .explanation-title {
@@ -1355,6 +1268,7 @@
                             padding: 15px;
                             background-color: #f1f3f5;
                             border-radius: 8px;
+                            width: 100%;
                         }
 
                         .score-text {
@@ -1370,12 +1284,57 @@
                         }
 
                         @media (max-width: 768px) {
+                            body {
+                                padding: 15px;
+                            }
+
                             .review-container {
                                 padding: 15px;
+                                width: 100%;
+                                max-width: 100%;
                             }
 
                             .review-title {
                                 font-size: 1.5rem;
+                            }
+
+                            .review-question {
+                                padding: 15px;
+                            }
+
+                            .explanation-container {
+                                padding: 12px;
+                            }
+                        }
+
+                        @media (max-width: 480px) {
+                            body {
+                                padding: 10px;
+                            }
+
+                            .review-container {
+                                padding: 10px;
+                            }
+
+                            .review-title {
+                                font-size: 1.3rem;
+                            }
+
+                            .review-question-text {
+                                font-size: 1rem;
+                            }
+
+                            .review-option {
+                                padding: 10px 12px;
+                                font-size: 0.95rem;
+                            }
+
+                            .score-text {
+                                font-size: 1.1rem;
+                            }
+
+                            .percentage-text {
+                                font-size: 1.3rem;
                             }
                         }
                     </style>

@@ -32,6 +32,10 @@
             --border-radius: 12px;
             --locked: #bdc3c7;
             --locked-dark: #7f8c8d;
+            --correct: #4caf50;
+            --incorrect: #f44336;
+            --explanation-bg: #f8f9fa;
+            --revisit: #ff9800;
         }
 
         * {
@@ -139,16 +143,56 @@
             z-index: 1001;
         }
 
+        /* Main Quiz Layout */
+        .quiz-main-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Question Navigation Sidebar */
+        .question-sidebar {
+            width: 250px;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-right: 20px;
+            transition: var(--transition);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
         /* Quiz Container */
         .quiz-container {
-            width: 90%;
-            max-width: 800px;
+            flex: 1;
             min-width: 300px;
             background: var(--card-bg);
             border-radius: var(--border-radius);
             padding: 2rem;
             box-shadow: var(--shadow);
-            margin: 20px auto;
             transition: var(--transition);
         }
 
@@ -297,6 +341,95 @@
             transform: none;
         }
 
+        /* Question Navigation Grid */
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .question-number {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f3f5;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .question-number:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .question-number.current {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        .question-number.answered {
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+
+        .question-number.not-answered {
+            background-color: #f8d7da;
+            border-color: #f1aeb5;
+        }
+
+        .question-number.marked {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-number.marked::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--revisit);
+            border-radius: 50%;
+        }
+
+        .mark-revisit {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--revisit);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .question-number:hover .mark-revisit {
+            opacity: 1;
+        }
+
+        .question-number.marked .mark-revisit {
+            opacity: 1;
+            background-color: white;
+            color: var(--revisit);
+            border: 1px solid var(--revisit);
+        }
+
+        /* Result Container */
         .result-container {
             text-align: center;
             display: none;
@@ -390,6 +523,165 @@
             transform: translateY(-2px);
         }
 
+        .review-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .review-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Review Questions Section */
+        .review-section {
+            margin-top: 40px;
+            text-align: left;
+            display: none;
+        }
+
+        .review-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .review-question {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .review-question:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .review-question-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: var(--text);
+            white-space: pre-line;
+        }
+
+        .review-option {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 4px solid transparent;
+        }
+
+        .review-option.correct {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left-color: var(--correct);
+        }
+
+        .review-option.incorrect {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-left-color: var(--incorrect);
+        }
+
+        .review-option.user-selected {
+            font-weight: 600;
+        }
+
+        .review-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .status-correct {
+            background-color: var(--correct);
+            color: white;
+        }
+
+        .status-incorrect {
+            background-color: var(--incorrect);
+            color: white;
+        }
+
+        .explanation-container {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--explanation-bg);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .explanation-text {
+            white-space: pre-line;
+            line-height: 1.5;
+        }
+
+        /* Mobile Question Navigation */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .mobile-nav-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 99;
+            padding: 20px;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .mobile-nav-panel.active {
+            right: 0;
+        }
+
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 98;
+            display: none;
+        }
+
+        .mobile-nav-overlay.active {
+            display: block;
+        }
+
         /* Footer Styles */
         .footer {
             background-color: var(--footer-bg);
@@ -449,6 +741,33 @@
         }
 
         /* Responsive styles */
+        @media (max-width: 992px) {
+            .quiz-main-container {
+                flex-direction: column;
+                padding: 0 15px;
+            }
+
+            .question-sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+                position: static;
+                display: none;
+            }
+
+            .question-sidebar.active {
+                display: block;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .mobile-nav-toggle {
+                display: flex;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding-top: 70px;
@@ -499,7 +818,7 @@
             }
 
             .quiz-container {
-                width: 94%;
+                width: 100%;
                 padding: 1.5rem;
             }
 
@@ -597,6 +916,19 @@
             .result-message {
                 font-size: 1rem;
             }
+
+            .question-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+
+            .question-number {
+                font-size: 0.8rem;
+            }
+
+            .mobile-nav-panel {
+                width: 280px;
+            }
         }
     </style>
 </head>
@@ -643,65 +975,106 @@
         </div>
     </nav>
 
-    <div class="quiz-container">
-        <div class="quiz-header">
-            <div class="quiz-title" id="quiz-title">
-                {% if day == 0 %}
-                Sample Test
-                {% else %}
-                Day {{ day }} Quiz
-                {% endif %}
+    <!-- Main Quiz Container -->
+    <div class="quiz-main-container">
+        <!-- Question Navigation Sidebar (Desktop) -->
+        <div class="question-sidebar" id="question-sidebar">
+            <div class="sidebar-title">
+                Questions
+                <button class="sidebar-toggle" id="sidebar-toggle">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="quiz-progress">
-                <div class="progress-text">Question <span id="current-question">1</span>/<span id="total-questions">{{
-                        questions|length }}</span></div>
-                <div class="timer-container" id="timer-container">
-                    <div class="timer" id="timer">{{ questions|length }}:00</div>
-                    <div class="timer-progress">
-                        <div class="timer-progress-bar" id="timer-progress-bar"></div>
+            <div class="question-grid" id="question-grid">
+                <!-- Question numbers will be populated here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Quiz Content -->
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div class="quiz-title" id="quiz-title">
+                    {% if day == 0 %}
+                    Sample Test
+                    {% else %}
+                    Day {{ day }} Quiz
+                    {% endif %}
+                </div>
+                <div class="quiz-progress">
+                    <div class="progress-text">Question <span id="current-question">1</span>/<span
+                            id="total-questions">{{ questions|length }}</span></div>
+                    <div class="timer-container" id="timer-container">
+                        <div class="timer" id="timer">{{ questions|length }}:00</div>
+                        <div class="timer-progress">
+                            <div class="timer-progress-bar" id="timer-progress-bar"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="question-container" class="question-container">
-            <div id="question-text" class="question-text"></div>
-            <div id="options-container" class="options-container"></div>
-            <div class="navigation-buttons">
-                <button id="prev-btn" class="nav-btn">Previous</button>
-                <button id="next-btn" class="next-btn">Next Question</button>
+            <div id="question-container" class="question-container">
+                <div id="question-text" class="question-text"></div>
+                <div id="options-container" class="options-container"></div>
+                <div class="navigation-buttons">
+                    <button id="prev-btn" class="nav-btn">Previous</button>
+                    <button id="next-btn" class="next-btn">Next Question</button>
+                </div>
             </div>
-        </div>
 
-        <div id="result-container" class="result-container">
-            <div class="result-score" id="result-score"></div>
-            <div class="result-message" id="result-message"></div>
+            <div id="result-container" class="result-container">
+                <div class="result-score" id="result-score"></div>
+                <div class="result-message" id="result-message"></div>
 
-            <h3 style="margin-bottom: 15px; color: var(--text); text-align: left;">Subject-wise Performance:</h3>
-            <table class="subject-scores" id="subject-scores">
-                <thead>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Correct</th>
-                        <th>Total</th>
-                        <th>Percentage</th>
-                    </tr>
-                </thead>
-                <tbody id="subject-scores-body">
-                    <!-- Subject-wise scores will be populated here -->
-                </tbody>
-            </table>
+                <h3 style="margin-bottom: 15px; color: var(--text); text-align: left;">Subject-wise Performance:</h3>
+                <table class="subject-scores" id="subject-scores">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Correct</th>
+                            <th>Total</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subject-scores-body">
+                        <!-- Subject-wise scores will be populated here -->
+                    </tbody>
+                </table>
 
-            <div class="result-actions">
-                <button class="result-btn pdf-btn" id="download-pdf">
-                    <i class="fas fa-file-pdf"></i> Download PDF Report
-                </button>
-                <button class="result-btn analysis-btn" id="performance-analysis">
-                    <i class="fas fa-chart-bar"></i> Performance Analysis
-                </button>
+                <div class="result-actions">
+                    <button class="result-btn pdf-btn" id="download-pdf">
+                        <i class="fas fa-file-pdf"></i> Download PDF Report
+                    </button>
+                    <button class="result-btn analysis-btn" id="performance-analysis">
+                        <i class="fas fa-chart-bar"></i> Performance Analysis
+                    </button>
+                    <button class="result-btn review-btn" id="review-questions-btn">
+                        <i class="fas fa-book-open"></i> Review Questions
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Mobile Navigation Toggle -->
+    <button class="mobile-nav-toggle" id="mobile-nav-toggle">
+        <i class="fas fa-list-ol"></i>
+    </button>
+
+    <!-- Mobile Navigation Panel -->
+    <div class="mobile-nav-panel" id="mobile-nav-panel">
+        <div class="sidebar-title">
+            Questions
+            <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="question-grid" id="mobile-question-grid">
+            <!-- Question numbers will be populated here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -736,6 +1109,7 @@
         let selectedOption = null;
         let timerInterval;
         let timeLeft = questions.length * 60; // Total minutes based on number of questions
+        let markedQuestions = new Set(); // Track questions marked for revisit
 
         // Track user answers for PDF report
         let userAnswers = {};
@@ -759,9 +1133,18 @@
         const subjectScoresBody = document.getElementById('subject-scores-body');
         const downloadPdfBtn = document.getElementById('download-pdf');
         const performanceAnalysisBtn = document.getElementById('performance-analysis');
+        const reviewQuestionsBtn = document.getElementById('review-questions-btn');
         const timerContainer = document.getElementById('timer-container');
         const navbarToggler = document.getElementById('navbarToggler');
         const navbarNav = document.getElementById('navbarNav');
+        const questionGrid = document.getElementById('question-grid');
+        const mobileQuestionGrid = document.getElementById('mobile-question-grid');
+        const questionSidebar = document.getElementById('question-sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+        const mobileNavPanel = document.getElementById('mobile-nav-panel');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileSidebarToggle = document.getElementById('mobile-sidebar-toggle');
 
         // Initialize the quiz
         function initQuiz() {
@@ -786,6 +1169,7 @@
 
             initializeSubjectScores();
             totalQuestionsSpan.textContent = questions.length;
+            createQuestionNavigation();
             loadQuestion();
             startTimer();
 
@@ -794,6 +1178,391 @@
             prevBtn.addEventListener('click', goToPreviousQuestion);
             downloadPdfBtn.addEventListener('click', generatePdfReport);
             performanceAnalysisBtn.addEventListener('click', redirectToAnalysis);
+            reviewQuestionsBtn.addEventListener('click', showReviewQuestionsInNewWindow);
+
+            // Sidebar toggle
+            sidebarToggle.addEventListener('click', () => {
+                questionSidebar.classList.toggle('active');
+            });
+
+            // Mobile navigation toggle
+            mobileNavToggle.addEventListener('click', toggleMobileNav);
+            mobileSidebarToggle.addEventListener('click', toggleMobileNav);
+            mobileNavOverlay.addEventListener('click', toggleMobileNav);
+        }
+
+        // Toggle mobile navigation
+        function toggleMobileNav() {
+            mobileNavPanel.classList.toggle('active');
+            mobileNavOverlay.classList.toggle('active');
+        }
+
+        // Show review questions in a new window
+        function showReviewQuestionsInNewWindow() {
+            // Create a new window
+            const reviewWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+
+            // Create HTML content for the review window
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Day ${day} Quiz Review</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+                    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                    <style>
+                        :root {
+                            --primary: #4361ee;
+                            --primary-dark: #3a0ca3;
+                            --success: #4cc9f0;
+                            --success-dark: #4895ef;
+                            --warning: #f72585;
+                            --text: #2c3e50;
+                            --text-light: #7f8c8d;
+                            --bg: #ffffff;
+                            --card-bg: #ffffff;
+                            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.15);
+                            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                            --correct: #4caf50;
+                            --incorrect: #f44336;
+                            --explanation-bg: #f8f9fa;
+                        }
+
+                        * {
+                            box-sizing: border-box;
+                            margin: 0;
+                            padding: 0;
+                        }
+
+                        body {
+                            font-family: 'Poppins', sans-serif;
+                            background-color: #f8f9fa;
+                            color: var(--text);
+                            padding: 20px;
+                            line-height: 1.6;
+                        }
+
+                        .review-container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                            background: white;
+                            padding: 30px;
+                            border-radius: 12px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        }
+
+                        .review-title {
+                            font-size: 1.8rem;
+                            margin-bottom: 20px;
+                            color: var(--primary);
+                            text-align: center;
+                            padding-bottom: 10px;
+                            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                        }
+
+                        .review-question {
+                            background-color: white;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin-bottom: 25px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                            transition: all 0.3s ease;
+                        }
+
+                        .review-question:hover {
+                            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+                        }
+
+                        .review-question-text {
+                            font-size: 1.1rem;
+                            margin-bottom: 15px;
+                            line-height: 1.5;
+                            color: var(--text);
+                            white-space: pre-line;
+                        }
+
+                        .telugu-text {
+                            font-family: 'Noto Sans Telugu', sans-serif;
+                            font-size: 1.1rem;
+                        }
+
+                        .review-option {
+                            padding: 12px 15px;
+                            border-radius: 6px;
+                            margin-bottom: 8px;
+                            border-left: 4px solid transparent;
+                        }
+
+                        .review-option.correct {
+                            background-color: rgba(76, 175, 80, 0.1);
+                            border-left-color: var(--correct);
+                        }
+
+                        .review-option.incorrect {
+                            background-color: rgba(244, 67, 54, 0.1);
+                            border-left-color: var(--incorrect);
+                        }
+
+                        .review-option.user-selected {
+                            font-weight: 600;
+                        }
+
+                        .review-status {
+                            display: inline-block;
+                            padding: 4px 8px;
+                            border-radius: 4px;
+                            font-size: 0.85rem;
+                            font-weight: 600;
+                            margin-left: 8px;
+                        }
+
+                        .status-correct {
+                            background-color: var(--correct);
+                            color: white;
+                        }
+
+                        .status-incorrect {
+                            background-color: var(--incorrect);
+                            color: white;
+                        }
+
+                        .explanation-container {
+                            margin-top: 15px;
+                            padding: 15px;
+                            background-color: var(--explanation-bg);
+                            border-radius: 6px;
+                            border-left: 4px solid var(--primary);
+                        }
+
+                        .explanation-title {
+                            font-weight: 600;
+                            margin-bottom: 8px;
+                            color: var(--primary);
+                        }
+
+                        .explanation-text {
+                            white-space: pre-line;
+                            line-height: 1.5;
+                        }
+
+                        .score-summary {
+                            text-align: center;
+                            margin-bottom: 30px;
+                            padding: 15px;
+                            background-color: #f1f3f5;
+                            border-radius: 8px;
+                        }
+
+                        .score-text {
+                            font-size: 1.2rem;
+                            font-weight: 600;
+                            color: var(--primary);
+                        }
+
+                        .percentage-text {
+                            font-size: 1.5rem;
+                            font-weight: 700;
+                            color: var(--success-dark);
+                        }
+
+                        @media (max-width: 768px) {
+                            .review-container {
+                                padding: 15px;
+                            }
+
+                            .review-title {
+                                font-size: 1.5rem;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="review-container">
+                        <h1 class="review-title">Day ${day} Quiz Review</h1>
+                        <div class="score-summary">
+                            <div class="score-text">Your Score: ${score}/${questions.length}</div>
+                            <div class="percentage-text">${Math.round((score / questions.length) * 100)}%</div>
+                        </div>
+                        ${generateReviewQuestionsHTML()}
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // Write the content to the new window
+            reviewWindow.document.open();
+            reviewWindow.document.write(htmlContent);
+            reviewWindow.document.close();
+        }
+
+        // Generate HTML for review questions
+        function generateReviewQuestionsHTML() {
+            let html = '';
+
+            questions.forEach((question, index) => {
+                const q = userAnswers[index];
+                const isCorrect = q.selectedOption === question.correct_option;
+                const questionData = questions[index]; // Get the full question data including explanation
+
+                html += `
+                    <div class="review-question">
+                        <div class="review-question-text ${q.isTelugu ? 'telugu-text' : ''}">
+                            <strong>Question ${index + 1}:</strong> ${q.question.replace(/\n/g, '<br>')}
+                        </div>
+                `;
+
+                // Options
+                const options = ['A', 'B', 'C', 'D'];
+                options.forEach((optionLetter, optionIndex) => {
+                    const opt = q.options[optionIndex];
+                    const isTeluguOption = /[\u0C00-\u0C7F]/.test(opt);
+                    const isCorrectOption = (optionIndex + 1) === q.correctOption;
+                    const isSelectedOption = (optionIndex + 1) === q.selectedOption;
+                    const isWrongSelection = isSelectedOption && !isCorrectOption;
+
+                    html += `
+                        <div class="review-option 
+                            ${isCorrectOption ? 'correct' : ''} 
+                            ${isWrongSelection ? 'incorrect' : ''}
+                            ${isSelectedOption ? 'user-selected' : ''}">
+                            <strong>${optionLetter})</strong> ${opt.replace(/\n/g, '<br>')}
+                    `;
+
+                    // Add status indicator
+                    if (isCorrectOption) {
+                        html += `<span class="review-status status-correct">Correct Answer</span>`;
+                    }
+
+                    if (isWrongSelection) {
+                        html += `<span class="review-status status-incorrect">Your Answer</span>`;
+                    }
+
+                    if (q.selectedOption === 0) {
+                        html += `<span class="review-status status-incorrect">Not Answered</span>`;
+                    }
+
+                    html += `</div>`;
+                });
+
+                // Explanation
+                html += `
+                    <div class="explanation-container">
+                        <div class="explanation-title">Explanation:</div>
+                        <div class="explanation-text ${/[\u0C00-\u0C7F]/.test(questionData.explanation) ? 'telugu-text' : ''}">
+                            ${questionData.explanation ? questionData.explanation.replace(/\n/g, '<br>') : 'No explanation available.'}
+                        </div>
+                    </div>
+                `;
+
+                html += `</div>`; // Close review-question div
+            });
+
+            return html;
+        }
+
+        // Create question navigation grid
+        function createQuestionNavigation() {
+            questionGrid.innerHTML = '';
+            mobileQuestionGrid.innerHTML = '';
+
+            questions.forEach((_, index) => {
+                // Create for desktop
+                const questionNumber = createQuestionNumberElement(index);
+                questionGrid.appendChild(questionNumber);
+
+                // Create for mobile
+                const mobileQuestionNumber = createQuestionNumberElement(index);
+                mobileQuestionGrid.appendChild(mobileQuestionNumber);
+            });
+        }
+
+        // Create a question number element
+        function createQuestionNumberElement(index) {
+            const questionNumber = document.createElement('div');
+            questionNumber.className = 'question-number';
+            questionNumber.textContent = index + 1;
+            questionNumber.dataset.index = index;
+
+            // Highlight current question
+            if (index === currentQuestionIndex) {
+                questionNumber.classList.add('current');
+            }
+
+            // Add mark for revisit button
+            const markButton = document.createElement('span');
+            markButton.className = 'mark-revisit';
+            markButton.innerHTML = '<i class="fas fa-flag"></i>';
+            markButton.title = 'Mark for revisit';
+            questionNumber.appendChild(markButton);
+
+            // Handle question number click
+            questionNumber.addEventListener('click', (e) => {
+                if (e.target !== markButton) {
+                    currentQuestionIndex = parseInt(questionNumber.dataset.index);
+                    loadQuestion();
+                    updateQuestionNavigation();
+
+                    // Close mobile nav if open
+                    if (mobileNavPanel.classList.contains('active')) {
+                        toggleMobileNav();
+                    }
+                }
+            });
+
+            // Handle mark for revisit click
+            markButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleMarkedQuestion(index);
+            });
+
+            return questionNumber;
+        }
+
+        // Toggle marked question
+        function toggleMarkedQuestion(index) {
+            if (markedQuestions.has(index)) {
+                markedQuestions.delete(index);
+            } else {
+                markedQuestions.add(index);
+            }
+            updateQuestionNavigation();
+        }
+
+        // Update question navigation grid
+        function updateQuestionNavigation() {
+            const questionNumbers = document.querySelectorAll('.question-number');
+            const mobileQuestionNumbers = document.querySelectorAll('#mobile-question-grid .question-number');
+
+            questionNumbers.forEach((number, index) => {
+                updateQuestionNumberState(number, index);
+            });
+
+            mobileQuestionNumbers.forEach((number, index) => {
+                updateQuestionNumberState(number, index);
+            });
+        }
+
+        // Update individual question number state
+        function updateQuestionNumberState(number, index) {
+            number.classList.remove('current', 'answered', 'not-answered', 'marked');
+
+            if (index === currentQuestionIndex) {
+                number.classList.add('current');
+            }
+
+            if (userAnswers[index] && userAnswers[index].selectedOption !== null) {
+                number.classList.add('answered');
+            } else if (userAnswers[index] && userAnswers[index].selectedOption === null) {
+                number.classList.add('not-answered');
+            }
+
+            if (markedQuestions.has(index)) {
+                number.classList.add('marked');
+            }
         }
 
         // Initialize subject scores
@@ -820,7 +1589,8 @@
                     correctOption: question.correct_option,
                     selectedOption: null,
                     subject: question.subject,
-                    isTelugu: /[\u0C00-\u0C7F]/.test(question.question) // Check if question contains Telugu characters
+                    isTelugu: /[\u0C00-\u0C7F]/.test(question.question), // Check if question contains Telugu characters
+                    explanation: question.explanation || "No explanation available."
                 };
             });
         }
@@ -885,6 +1655,9 @@
 
                         // Enable next button
                         nextBtn.disabled = false;
+
+                        // Update question navigation
+                        updateQuestionNavigation();
                     }
                 });
 
@@ -895,6 +1668,9 @@
             prevBtn.style.display = currentQuestionIndex === 0 ? 'none' : 'block';
             nextBtn.textContent = currentQuestionIndex === questions.length - 1 ? 'Submit Quiz' : 'Next Question';
             nextBtn.disabled = selectedOption === null;
+
+            // Update question navigation
+            updateQuestionNavigation();
         }
 
         // Navigation functions
@@ -988,6 +1764,7 @@
             questionContainer.style.display = 'none';
             resultContainer.style.display = 'block';
             timerContainer.style.display = 'none';
+            questionSidebar.style.display = 'none'; // Hide question numbers after submission
 
             // Display overall score
             resultScore.textContent = `${score}/${questions.length}`;
@@ -1039,7 +1816,8 @@
                     total_score: score,
                     total_questions: questions.length,
                     subject_scores: subjectScores,
-                    user_answers: userAnswers
+                    user_answers: userAnswers,
+                    marked_questions: Array.from(markedQuestions)
                 })
             })
                 .then(response => {
@@ -1050,9 +1828,8 @@
                 .catch(error => console.error('Error saving results:', error));
         }
 
-
-        //generating pdf
- async function generatePdfReport() {
+        // Generate PDF report
+        async function generatePdfReport() {
             // Show loading indicator for mobile users
             const originalText = downloadPdfBtn.innerHTML;
             downloadPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
@@ -1093,6 +1870,21 @@
                     const subj = subjectScores[subject];
                     doc.text(`${subject}: ${subj.correct}/${subj.total} (${subj.percentage}%)`, 14, yPos);
                     yPos += 10;
+                }
+
+                // Add marked questions section if any
+                if (markedQuestions.size > 0) {
+                    doc.addPage();
+                    doc.setFontSize(16);
+                    doc.text('Questions Marked for Revisit', 105, 20, { align: 'center' });
+                    doc.setFontSize(12);
+
+                    yPos = 30;
+                    Array.from(markedQuestions).forEach(index => {
+                        const question = questions[index];
+                        doc.text(`Question ${index + 1}: ${question.subject}`, 14, yPos);
+                        yPos += 10;
+                    });
                 }
 
                 // Add detailed question answers
@@ -1322,9 +2114,7 @@
             }
         }
 
-
-
-        // // Redirect to performance analysis
+        // Redirect to performance analysis
         function redirectToAnalysis() {
             window.location.href = `/score-board?user_id=${userId}&day=${day}`;
         }

@@ -54,7 +54,7 @@
             padding-top: 80px;
         }
 
-        /* Navbar Styles */
+        /* Navbar Styles - Exactly matching the reference */
         .navbar {
             background-color: var(--nav-bg);
             padding: 1rem 2rem;
@@ -68,6 +68,12 @@
             right: 0;
             z-index: 1000;
             height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            height: 70px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .navbar-container {
@@ -86,6 +92,11 @@
             color: white;
             text-decoration: none;
             font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .navbar-brand:hover {
+            transform: translateX(5px);
         }
 
         .navbar-brand img {
@@ -93,6 +104,11 @@
             height: 40px;
             margin-right: 10px;
             border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .navbar-brand:hover img {
+            transform: rotate(15deg);
         }
 
         .navbar-nav {
@@ -112,6 +128,7 @@
             font-weight: 500;
             transition: color 0.3s;
             padding: 0.5rem 0;
+            position: relative;
         }
 
         .nav-link:hover {
@@ -141,6 +158,16 @@
             font-size: 1.5rem;
             cursor: pointer;
             z-index: 1001;
+            transition: transform 0.3s;
+        }
+
+        .navbar-toggler:hover {
+            transform: rotate(90deg);
+        }
+
+        /* Mobile menu styles */
+        .navbar-nav.active {
+            display: flex;
         }
 
         /* Main Quiz Layout */
@@ -755,13 +782,191 @@
             display: block;
         }
 
-        /* Footer Styles */
+        /* Instructions Modal */
+        .instructions-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .instructions-modal.active {
+            display: block;
+        }
+
+        .instructions-modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .instructions-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: color 0.3s;
+        }
+
+        .instructions-modal-close:hover {
+            color: var(--warning);
+        }
+
+        .instructions-modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .instructions-list {
+            margin-bottom: 20px;
+        }
+
+        .instructions-list li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .instructions-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .start-quiz-btn {
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .start-quiz-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Warning Modal */
+        .warning-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .warning-modal.active {
+            display: block;
+        }
+
+        .warning-modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 30px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            text-align: center;
+        }
+
+        .warning-icon {
+            font-size: 3rem;
+            color: var(--warning);
+            margin-bottom: 20px;
+        }
+
+        .warning-modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--warning);
+        }
+
+        .warning-modal-text {
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .warning-modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .warning-modal-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .warning-modal-btn.cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .warning-modal-btn.cancel:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .warning-modal-btn.submit {
+            background: var(--primary);
+            color: white;
+        }
+
+        .warning-modal-btn.submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Footer Styles - Exactly matching the reference */
         .footer {
             background-color: var(--footer-bg);
             color: white;
             padding: 3rem 0 2rem;
             text-align: center;
             margin-top: auto;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--success), var(--warning));
         }
 
         .footer-content {
@@ -781,12 +986,28 @@
         .footer-link {
             color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: all 0.3s;
             font-size: 0.95rem;
+            position: relative;
+        }
+
+        .footer-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: width 0.3s;
         }
 
         .footer-link:hover {
             color: white;
+        }
+
+        .footer-link:hover::after {
+            width: 100%;
         }
 
         .social-links {
@@ -799,12 +1020,21 @@
         .social-link {
             color: white;
             font-size: 1.3rem;
-            transition: transform 0.3s, color 0.3s;
+            transition: all 0.3s;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .social-link:hover {
-            color: var(--success);
-            transform: translateY(-3px);
+            color: white;
+            transform: translateY(-5px);
+            background: var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .copyright {
@@ -1022,7 +1252,7 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
                 <img src="{{ url_for('static', filename='877d97b9-824a-4e8d-831f-69978a4253fd.webp') }}" alt="Logo">
@@ -1061,6 +1291,66 @@
             </ul>
         </div>
     </nav>
+
+    <!-- Instructions Modal -->
+    <div class="instructions-modal active" id="instructions-modal">
+        <div class="instructions-modal-content">
+            <button class="instructions-modal-close" id="instructions-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="instructions-modal-title">Quiz Instructions</h2>
+
+            <div class="instructions-list">
+                <ol>
+                    <li><strong>Total Questions:</strong> This quiz contains {{ questions|length }} questions.</li>
+                    <li><strong>Time Limit:</strong> You have {{ questions|length }} minutes to complete the quiz (1
+                        minute per question).</li>
+                    <li><strong>Navigation:</strong> Use the question numbers panel to navigate between questions.</li>
+                    <li><strong>Mark for Review:</strong> Click the flag icon on question numbers to mark them for
+                        review.</li>
+                    <li><strong>Answering:</strong> Select one option for each question. You can change your answer
+                        before submitting.</li>
+                    <li><strong>Submission:</strong> The quiz will auto-submit when time expires, or you can submit
+                        manually.</li>
+                    <li><strong>Review:</strong> After submission, you can review all questions with explanations.</li>
+                </ol>
+
+                <p style="margin-top: 20px; font-weight: 600; color: var(--warning);">
+                    Note: Make sure to answer all questions before submitting. Marked but unanswered questions will be
+                    highlighted before submission.
+                </p>
+            </div>
+
+            <div class="instructions-actions">
+                <button class="start-quiz-btn" id="start-quiz-btn">
+                    <i class="fas fa-play"></i> Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Modal for Marked Questions -->
+    <div class="warning-modal" id="warning-modal">
+        <div class="warning-modal-content">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="warning-modal-title">Unanswered Marked Questions</h3>
+            <p class="warning-modal-text">
+                You have marked <span id="unanswered-count">0</span>
+                question(s) for review but haven't answered them yet. Would you like to review these questions before
+                submitting?
+            </p>
+            <div class="warning-modal-actions">
+                <button class="warning-modal-btn cancel" id="cancel-submit">
+                    <i class="fas fa-arrow-left"></i> Go Back
+                </button>
+                <button class="warning-modal-btn submit" id="confirm-submit">
+                    <i class="fas fa-paper-plane"></i> Submit Anyway
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Quiz Container -->
     <div class="quiz-main-container">
@@ -1225,6 +1515,7 @@
         let timeLeft = questions.length * 60; // Total minutes based on number of questions
         let markedQuestions = new Set(); // Track questions marked for revisit
         let currentReviewQuestionIndex = 0; // Track current question in review modal
+        let quizStarted = false; // Track if quiz has started
 
         // Track user answers for PDF report
         let userAnswers = {};
@@ -1269,6 +1560,17 @@
         const reviewNextBtn = document.getElementById('review-next-btn');
         const reviewQuestionCounter = document.getElementById('review-question-counter');
 
+        // Instructions modal elements
+        const instructionsModal = document.getElementById('instructions-modal');
+        const instructionsModalClose = document.getElementById('instructions-modal-close');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+
+        // Warning modal elements
+        const warningModal = document.getElementById('warning-modal');
+        const cancelSubmitBtn = document.getElementById('cancel-submit');
+        const confirmSubmitBtn = document.getElementById('confirm-submit');
+        const unansweredCountSpan = document.getElementById('unanswered-count');
+
         // Initialize the quiz
         function initQuiz() {
             // Mobile menu toggle
@@ -1290,11 +1592,10 @@
                 });
             });
 
+            // Initialize subject scores and user answers
             initializeSubjectScores();
             totalQuestionsSpan.textContent = questions.length;
             createQuestionNavigation();
-            loadQuestion();
-            startTimer();
 
             // Set up event listeners
             nextBtn.addEventListener('click', goToNextQuestion);
@@ -1319,6 +1620,45 @@
             mobileNavToggle.addEventListener('click', toggleMobileNav);
             mobileSidebarToggle.addEventListener('click', toggleMobileNav);
             mobileNavOverlay.addEventListener('click', toggleMobileNav);
+
+            // Instructions modal
+            instructionsModalClose.addEventListener('click', () => {
+                instructionsModal.classList.remove('active');
+            });
+
+            startQuizBtn.addEventListener('click', startQuiz);
+
+            // Warning modal
+            cancelSubmitBtn.addEventListener('click', () => {
+                warningModal.classList.remove('active');
+            });
+
+            confirmSubmitBtn.addEventListener('click', () => {
+                warningModal.classList.remove('active');
+                calculateResults();
+                showResults();
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', function () {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Show instructions modal on load
+            instructionsModal.classList.add('active');
+        }
+
+        // Start the quiz
+        function startQuiz() {
+            quizStarted = true;
+            instructionsModal.classList.remove('active');
+            loadQuestion();
+            startTimer();
         }
 
         // Toggle mobile navigation
@@ -1639,9 +1979,8 @@
                 currentQuestionIndex++;
                 loadQuestion();
             } else {
-                // Submit the quiz
-                calculateResults();
-                showResults();
+                // Check for marked but unanswered questions before submitting
+                checkMarkedUnansweredQuestions();
             }
         }
 
@@ -1649,6 +1988,27 @@
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
                 loadQuestion();
+            }
+        }
+
+        // Check for marked but unanswered questions
+        function checkMarkedUnansweredQuestions() {
+            const unansweredMarked = [];
+
+            markedQuestions.forEach(index => {
+                if (userAnswers[index].selectedOption === null) {
+                    unansweredMarked.push(index + 1); // +1 to make it 1-based for display
+                }
+            });
+
+            if (unansweredMarked.length > 0) {
+                // Show warning modal
+                unansweredCountSpan.textContent = unansweredMarked.length;
+                warningModal.classList.add('active');
+            } else {
+                // No marked unanswered questions, proceed with submission
+                calculateResults();
+                showResults();
             }
         }
 
@@ -2007,7 +2367,6 @@
                         const isTeluguExplanation = /[\u0C00-\u0C7F]/.test(questionData.explanation);
 
                         if (isTeluguExplanation) {
-                            // Handle Telugu explanation with image
                             const tempExplanationDiv = document.createElement('div');
                             tempExplanationDiv.style.position = 'absolute';
                             tempExplanationDiv.style.left = '-9999px';

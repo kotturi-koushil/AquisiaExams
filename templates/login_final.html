@@ -448,6 +448,9 @@
             <p style="color:red;">{{r}}</p>
             <h2 class="auth-title">Login to Your Account</h2>
             {% with messages = get_flashed_messages(with_categories=true) %}
+             <div class="auth-footer">
+                    Don't have an account? <a href="{{ url_for('register') }}" class="auth-link">Register here</a>
+                </div>
     {% if messages %}
         {% for category, message in messages %}
             <div class="alert alert-{{ category }}">{{ message }}</div>
@@ -462,7 +465,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">The password set at the time of registration</label>
                     <input type="password" id="password" name="password" class="form-control" required>
                 </div>
 
@@ -476,9 +479,7 @@
 
                 
 
-                <div class="auth-footer">
-                    Don't have an account? <a href="{{ url_for('register') }}" class="auth-link">Register here</a>
-                </div>
+               
             </form>
         </div>
     </div>
